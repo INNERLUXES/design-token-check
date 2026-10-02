@@ -1,0 +1,50 @@
+{
+  "name": "design-token-check",
+  "version": "1.0.0",
+  "description": "Check the design tokens of a mobile app design system before handoff, against accessibility and platform rules. Reads a W3C Design Tokens Community Group file and a small rules file: the WCAG 2.x contrast ratio of every text and background pair per theme, touch target sizes for iOS, Android and web, alias cycles, unresolved aliases and invalid colors, each with the token path, file and line. Reads files only, no dependencies.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "bin": {
+    "design-token-check": "bin/design-token-check.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "docs",
+    "examples",
+    "research",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "test:coverage": "node --test --experimental-test-coverage \"test/*.test.js\"",
+    "check": "node tools/check.mjs",
+    "example": "node tools/example.mjs"
+  },
+  "keywords": [
+    "design-tokens",
+    "dtcg",
+    "accessibility",
+    "wcag",
+    "contrast",
+    "touch-target",
+    "mobile",
+    "ios",
+    "android",
+    "cli"
+  ],
+  "author": "INNERLUXES <info@innerluxes.dev>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/INNERLUXES/design-token-check.git"
+  },
+  "homepage": "https://innerluxes.dev/application/mobile/design"
+}

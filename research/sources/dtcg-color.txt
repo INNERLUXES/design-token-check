@@ -1,0 +1,1390 @@
+Source: https://tr.designtokens.org/color/
+Text taken from the saved page (Design Tokens Color Module), which the format page refers to for the color type; markup is flattened.
+
+Design Tokens Color Module 2025.10
+
+-
+-
+
+# Design Tokens Color Module 2025.10
+
+Draft Community Group Report
+08 September 2026
+
+Latest published version:
+
+https://www.designtokens.org/TR/2025.10/color/
+
+Editors:
+
+Ayesha Mazrana (Mazumdar)
+
+Kathleen McMahon
+
+Adekunle Oduye
+
+Matthew Ström-Awn
+
+Feedback:
+
+GitHub design-tokens/community-group
+(pull requests,
+new issue,
+open issues)
+
+## Abstract
+
+This document describes the technical specification for design token
+color values and opacity.
+
+## Status of This Document
+
+This is a
+preview
+
+Do not attempt to implement this version of the specification. Do not
+reference this version as authoritative in any way.
+
+This specification was published by the
+Design Tokens Community Group. It is not a W3C Standard nor is it
+on the W3C Standards Track.
+
+Please note that under the
+W3C Community Contributor License Agreement (CLA)
+there is a limited opt-out and other conditions apply.
+
+Learn more about
+W3C Community and Business Groups.
+
+This section describes the status of this document at the time of its
+publication. Other documents may supersede this document. A list of
+current W3C Community Group reports and the latest revision of this
+report can be found in the W3C Community Group reports index at
+https://www.w3.org/community/reports/.
+
+⚠️ This is a preview draft of in progress changes. Do
+not refer to this document directly, and do not implement anything in
+this document.
+
+GitHub Issues are preferred for
+discussion of this specification.
+
+## 1. Conformance
+
+As well as sections marked as non-normative, all authoring guidelines, diagrams, examples, and notes in this specification are non-normative. Everything else in this specification is normative.
+
+The key words MAY, MUST, and MUST NOT in this document
+are to be interpreted as described in
+BCP 14
+[RFC2119] [RFC8174]
+when, and only when, they appear in all
+capitals, as shown here.
+
+## 2. Introduction
+
+### 2.1 Color Tokens
+
+Color tokens can be used to represent colors in different color spaces. Colors represented in tokens can then be converted to other color spaces by translation tools.
+
+Generally speaking, this module uses CSS Color Module Level 4 for reference to concepts and terminology. CSS Color Module Level 4 is a W3C Working Draft and is not a final specification. It is subject to change and may not be implemented in all browsers or platforms.
+
+Editor's note: Why CSS Color Module Level 4?
+
+Color is a complex topic. CSS Color Module Level 4 provides a comprehensive baseline:
+
+- It provides a definition of common color spaces, including gamuts and component coordinates
+
+- It gives technical specifications for translating colors between color spaces
+
+- Its authors are experts in the field of color science
+
+- As a spec it must reach an extremely high standard of implementability and precision
+
+Using this spec as a reference allows us to focus on the design and implementation of the tokens themselves, rather than the underlying color science.
+
+It is not an endorsement of CSS as a default implementation for color tokens.
+
+## 3. Color terminology
+
+This section provides a high-level overview of the terminology used in the specification and how it relates to color science and colorimetry.
+
+Color space
+
+A color space is a specific organization of colors, which helps in the reproduction of color in both physical and digital realms. It defines a range of colors that can be represented and manipulated.
+
+Color model
+
+A color model is a mathematical representation of colors within a specific color space. It defines how colors are represented as numerical values, typically using components.
+
+Color gamut
+
+A color gamut is the complete range of colors that can be represented in a specific color space. It defines the limits of color reproduction for that space.
+
+Component
+
+A component is a single value that defines a part of a color in a specific color space. For example, in the RGB color space, the components are red, green, and blue.
+
+Hue
+
+Hue is the attribute of a color that allows it to be classified as red, green, blue, etc. In many color spaces, hue is represented as an angle on a color wheel. Different color spaces may position colors differently on the wheel.
+
+Saturation
+
+Saturation is the colorfulness of a color relative to its own brightness. It describes how much gray is present in a color. A fully saturated color has no gray, while a desaturated color appears more grayish. It is inherently tied to both chroma and lightness, especially in models like HSL or HSV. A color can be highly saturated but still appear light or dark depending on its lightness.
+
+Lightness
+
+Lightness is the perceived brightness of a color. It describes how light or dark a color appears.
+
+Chroma
+
+Chroma refers to the colorfulness of a color relative to the brightness of a similarly illuminated white. It measures how pure or intense a color appears. In the CIE LCH color model (Lightness, Chroma, Hue), Chroma is independent of lightness and expresses how far a color is from neutral gray along the chromatic axis.
+
+Alpha
+
+Alpha is a component that represents the transparency of a color. It defines how opaque or transparent a color is, with the minimum value (usually 0) being fully transparent and the maximum value (usually 1) being fully opaque.
+
+## 4. Color type
+
+Represents a color.
+
+### 4.1 Format
+
+For color tokens, the $type property MUST be set to the string color.
+
+The $value property can then be used to specify the details of the color, The $value object contains the following properties:
+
+- colorSpace (required): A string that specifies the color space or color model. For supported color spaces, see the supported color spaces section below.
+
+- components (required): An array representing the color components. The number of components depends on the color space. Each element of the array MUST be either:
+- A number
+
+- The 'none' keyword
+
+- alpha (optional): A number that represents the alpha value of the color. This value is between 0 and 1, where 0 is fully transparent and 1 is fully opaque. If omitted, the alpha value of the color MUST be assumed to be 1 (fully opaque).
+
+- hex (optional): A string that represents a fallback value of the color. The fallback color MUST be formatted in 6 digit CSS hex color notation format to avoid conflicts with the provided alpha value.
+
+Example 1
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 0, 1],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+},
+"Translucent shadow": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0, 0],
+"alpha": 0.5,
+"hex": "#000000"
+}
+}
+}
+
+#### 4.1.1 The none keyword
+
+When specifying a color in some color spaces, a value of 0 could be ambiguous. For example, in the HSL color space, colors with a hue of 0 are red; while a single color like hsl(0, 0, 50) would not be rendered as red, it may be treated as a completely desaturated red when interpolated with other colors. Therefore, in certain color spaces, 0 is insufficient to indicate that there is no value for a given component.
+
+CSS Color Module Level 4 has introduced the none keyword to indicate that a component is missing, or not applicable. For example, in the HSL color space, the none keyword may be used to indicate that there is no angle value for the color; a color with a hue value of none MAY be rendered differently from a color with a hue angle of 0, or result in different colors when interpolating.
+
+##### 4.1.1.1 Using the none keyword
+
+The none keyword MAY be used in the components array to indicate that a component is not applicable or not specified.
+
+Example 2
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"White": {
+"$type": "color",
+"$value": {
+"colorSpace": "hsl",
+"components": ["none", 0, 100],
+"alpha": 1,
+"hex": "#ffffff"
+}
+}
+}
+
+Contrast this with the following example where the Hue is specified as 0:
+
+Example 3
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"White": {
+"$type": "color",
+"$value": {
+"colorSpace": "hsl",
+"components": [0, 0, 100],
+"alpha": 1,
+"hex": "#ffffff"
+}
+}
+}
+
+While both examples will render as white, the first example is more explicit about the fact that the hue is not applicable. This is important when interpolating between colors or mixing colors, where using colors with components of 0 or none can yield different results.
+
+### 4.2 Supported Color spaces
+
+The following values are supported for the colorSpace property. The components array will vary depending on the color space.
+
+Editor's note: Syntax for expressing ranges
+
+In this table, brackets [] indicate that extrema are included, parentheses () indicate that the extrema are excluded. For example, in the HSL color space, hue is in the range of [0 - 360), which means that 0 MAY be used but 360 MUST NOT be used.
+
+Color Space |
+Key |
+Values |
+
+sRGB |
+"srgb" |
+Red |
+[0 - 1] |
+
+Green |
+[0 - 1] |
+
+Blue |
+[0 - 1] |
+
+sRGB linear |
+"srgb-linear" |
+Red |
+[0 - 1] |
+
+Green |
+[0 - 1] |
+
+Blue |
+[0 - 1] |
+
+HSL |
+"hsl" |
+Hue |
+[0 - 360) |
+
+Saturation |
+[0 - 100] |
+
+Lightness |
+[0 - 100] |
+
+HWB |
+"hwb" |
+Hue |
+[0 - 360) |
+
+Whiteness |
+[0 - 100] |
+
+Blackness |
+[0 - 100] |
+
+CIELAB |
+"lab" |
+Lightness |
+[0 - 100] |
+
+A |
+[-Infinity - Infinity]* |
+
+B |
+[-Infinity - Infinity]* |
+
+LCH |
+"lch" |
+Lightness |
+[0 - 100] |
+
+Chroma |
+[0 - Infinity]** |
+
+Hue |
+[0 - 360) |
+
+OKLAB |
+"oklab" |
+Lightness |
+[0 - 1] |
+
+A |
+[-Infinity - Infinity]† |
+
+B |
+[-Infinity - Infinity]† |
+
+OKLCH |
+"oklch" |
+Lightness |
+[0 - 1] |
+
+Chroma |
+[0 - Infinity]‡ |
+
+Hue |
+[0 - 360) |
+
+Display P3 |
+"display-p3" |
+Red |
+[0 - 1] |
+
+Green |
+[0 - 1] |
+
+Blue |
+[0 - 1] |
+
+A98 RGB |
+"a98-rgb" |
+Red |
+[0 - 1] |
+
+Green |
+[0 - 1] |
+
+Blue |
+[0 - 1] |
+
+ProPhoto RGB |
+"prophoto-rgb" |
+Red |
+[0 - 1] |
+
+Green |
+[0 - 1] |
+
+Blue |
+[0 - 1] |
+
+Rec 2020 |
+"rec2020" |
+Red |
+[0 - 1] |
+
+Green |
+[0 - 1] |
+
+Blue |
+[0 - 1] |
+
+XYZ-D65 |
+"xyz-d65" |
+X |
+[0 - 1] |
+
+Y |
+[0 - 1] |
+
+Z |
+[0 - 1] |
+
+XYZ-D50 |
+"xyz-d50" |
+X |
+[0 - 1] |
+
+Y |
+[0 - 1] |
+
+Z |
+[0 - 1] |
+
+* In CIELAB, A and B are unbounded but in practice don't exceed -160 to 160
+
+** In LCH, C is unbounded but in practice doesn't exceed 230
+
+† In OKLAB, A and B are unbounded but in practice don't exceed -0.5 to 0.5
+
+‡ In OKLCH, Chroma is unbounded but in practice doesn't exceed 0.5
+
+Editor's note: Precision in examples
+
+The examples below have varying degrees of precision (i.e. numbers after the decimal). This is done to ensure that the fallback color is exactly the same as the defined color when converted to HEX. In practice, the numbers used to define each component can have any degree of precision.
+
+Editor's note: Optional values in examples
+
+The examples below are given with all optional values (alpha, hex) included for the purpose of completeness. Defining the alpha property for fully-opaque colors is not required, see Format.
+
+Editor's note: How does this conform to CSS Color Module 4?
+
+To provide a logically consistent approach without creating ambiguity around the format, this spec takes the following approach:
+
+- If CSS Color Module 4 allows a color space to be referenced by both a named function (like srgb()) and a keyword in the color() function, use the format intended for the color() function.
+
+- If CSS Color Module 4 only defines a color space either as a named function (like hwb()) or a keyword in the color() function (like rec-2020), use the syntax indicated.
+
+- If CSS Color Module 4 allows both unit values (like 50) and percentages (like 50%) for a component, use the unit value.
+
+Using this spec as a reference allows us to focus on the design and implementation of the tokens themselves, rather than the underlying color science.
+
+#### 4.2.1 sRGB
+
+sRGB was the standard color space for all CSS colors before CSS Color Module 4. It is the most widely used color space on the web, and is the default color space for most design tools.
+
+##### 4.2.1.1 Components
+
+[Red, Green, Blue]
+
+- Red: A number between 0 and 1 representing the red component of the color.
+
+- Green: A number between 0 and 1 representing the green component of the color.
+
+- Blue: A number between 0 and 1 representing the blue component of the color.
+
+Example 4
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 0, 1],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the sRGB color space, see Multimedia systems and equipment - Colour measurement and management - Part 2-1: Colour management - Default RGB colour space - sRGB.
+
+#### 4.2.2 sRGB linear
+
+sRGB linear is a linearized version of sRGB. It is used in some design tools to represent colors in a linear color space.
+
+##### 4.2.2.1 Components
+
+[Red, Green, Blue]
+
+- Red: A number between 0 and 1 representing the red component of the color.
+
+- Green: A number between 0 and 1 representing the green component of the color.
+
+- Blue: A number between 0 and 1 representing the blue component of the color.
+
+Example 5
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb-linear",
+"components": [1, 0, 1],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the sRGB linear color space, see Multimedia systems and equipment - Colour measurement and management - Part 2-1: Colour management - Default RGB colour space - sRGB.
+
+#### 4.2.3 HSL
+
+HSL is a color model that is a polar transformation of sRGB, supported as early as CSS Color Level 3.
+
+##### 4.2.3.1 Components
+
+[Hue, Saturation, Lightness]
+
+- Hue: A number from 0 up to (but not including) 360, but representing the hue angle of the color on the color wheel.
+
+- Saturation: A number between 0 and 100 representing the percentage of color saturation.
+
+- Lightness: A number between 0 and 100 representing the percentage of lightness.
+
+Example 6
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "hsl",
+"components": [330, 100, 50],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the HSL color space, see HSL: light vs saturation.
+
+#### 4.2.4 HWB
+
+Another color model, a polar transformation of sRGB.
+
+##### 4.2.4.1 Components
+
+[Hue, Whiteness, Blackness]
+
+- Hue: A number from 0 up to (but not including) 360 representing the angle of the color on the color wheel.
+
+- Whiteness: A number between 0 and 100 representing the percentage of white in the color.
+
+- Blackness: A number between 0 and 100 representing the percentage of black in the color.
+
+Example 7
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "hwb",
+"components": [330, 0, 0],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the HWB color space, see HWB — A More Intuitive Hue-Based Color Model.
+
+#### 4.2.5 CIELAB
+
+CIELAB is a color space that is designed to be perceptually uniform.
+
+##### 4.2.5.1 Components
+
+[L, A, B]
+
+- L: A number between 0 and 100 representing the percentage of lightness of the color.
+
+- A: A signed number representing the green-red axis of the color.
+
+- B: A signed number representing the blue-yellow axis of the color.
+
+A and B are theoretically unbounded, but in practice don't exceed -160 to 160.
+
+Example 8
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "lab",
+"components": [60.17, 93.54, -60.5],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the CIELAB color space, see ISO/CIE 11664-4:2019(E): Colorimetry — Part 4: CIE 1976 L*a*b* colour space.
+
+#### 4.2.6 LCH
+
+LCH is a cylindrical representation of CIELAB.
+
+##### 4.2.6.1 Components
+
+[L, C, Hue]
+
+- L: A number between 0 and 100 representing the percentage of lightness of the color.
+
+- C: A number representing the chroma of the color.
+
+- Hue: A number from 0 up to (but not including) 360 representing the angle of the color on the color wheel.
+
+The minimum value of C is 0, which represents a neutral color (gray), and its maximum is theoretically unbounded, but in practice doesn't exceed 230.
+
+Example 9
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "lch",
+"components": [60.17, 111.4, 327.11],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the LCH color space, see the CIELAB and LCH section of CSS Color Module Level 4.
+
+#### 4.2.7 OKLAB
+
+OKLAB is a perceptually uniform color space that is designed to be more accurate than CIELAB.
+
+##### 4.2.7.1 Components
+
+[L, A, B]
+
+- L: A number between 0 and 1 representing the lightness of the color.
+
+- A: A signed number representing the green-red axis of the color.
+
+- B: A signed number representing the blue-yellow axis of the color.
+
+Like in CIELAB, A and B are theoretically unbounded, but in practice don't exceed -0.5 to 0.5.
+
+Example 10
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "oklab",
+"components": [0.701, 0.2746, -0.169],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the OKLAB color space, see OKLAB: A Perceptually Uniform Color Space.
+
+#### 4.2.8 OKLCH
+
+OKLCH is a cylindrical color model of OKLAB.
+
+##### 4.2.8.1 Components
+
+[L, Chroma, Hue]
+
+- L: A number between 0 and 1 representing the lightness of the color.
+
+- Chroma: A number representing the chroma of the color.
+
+- Hue: A number from 0 up to (but not including) 360 representing the angle of the color on the color wheel.
+
+Like in LCH, the minimum value of Chroma is 0, which represents a neutral color (gray), and its maximum is theoretically unbounded, but in practice doesn't exceed 0.5.
+
+Example 11
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "oklch",
+"components": [0.7016, 0.3225, 328.363],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the OKLCH color space, see OKLAB: A Perceptually Uniform Color Space.
+
+#### 4.2.9 Display P3
+
+Display P3 is a color space that is designed to be used in displays with a wide color gamut. It is based on the P3 color space used in digital cinema.
+
+##### 4.2.9.1 Components
+
+[Red, Green, Blue]
+
+- Red: A number between 0 and 1 representing the red component of the color.
+
+- Green: A number between 0 and 1 representing the green component of the color.
+
+- Blue: A number between 0 and 1 representing the blue component of the color.
+
+Example 12
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "display-p3",
+"components": [1, 0, 1],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the Display P3 color space, see the definition of Display P3.
+
+#### 4.2.10 A98 RGB
+
+A98 RGB is a color space that is designed to be used in displays with a wide color gamut. It is based on the Adobe RGB color space.
+
+##### 4.2.10.1 Components
+
+[Red, Green, Blue]
+
+- Red: A number between 0 and 1 representing the red component of the color.
+
+- Green: A number between 0 and 1 representing the green component of the color.
+
+- Blue: A number between 0 and 1 representing the blue component of the color.
+
+Example 13
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "a98-rgb",
+"components": [1, 0, 1],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+To learn more about the A98 color space, see the Adobe RGB color space article on Wikipedia.
+
+#### 4.2.11 ProPhoto RGB
+
+ProPhoto RGB is a color space that is designed to be used in displays with a wide color gamut. It is based on the ProPhoto RGB color space.
+
+##### 4.2.11.1 Components
+
+[Red, Green, Blue]
+
+- Red: A number between 0 and 1 representing the red component of the color.
+
+- Green: A number between 0 and 1 representing the green component of the color.
+
+- Blue: A number between 0 and 1 representing the blue component of the color.
+
+Example 14
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "prophoto-rgb",
+"components": [1, 0, 1],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the ProPhoto RGB color space, see Design and Optimization of the ProPhoto RGB Color Encodings
+.
+
+#### 4.2.12 Rec 2020
+
+Rec 2020 is a color space that is designed to be used in displays with a wide color gamut. It is based on the Rec 2020 color space.
+
+##### 4.2.12.1 Components
+
+[Red, Green, Blue]
+
+- Red: A number between 0 and 1 representing the red component of the color.
+
+- Green: A number between 0 and 1 representing the green component of the color.
+
+- Blue: A number between 0 and 1 representing the blue component of the color.
+
+Example 15
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "rec2020",
+"components": [1, 0, 1],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the Rec 2020 color space, see Recommendation ITU-R BT.2020-2: Parameter values for ultra-high definition television systems for production and international programme exchange .
+
+#### 4.2.13 XYZ-D65
+
+XYZ-D65 is a color space that is designed to be able to represent all colors that can be perceived by the human eye. It is a fundamental color space — all other spaces can be converted to and from XYZ. It is based on the CIE 1931 color space, using the D65 illuminant. XYZ is not commonly used in design tools, but is useful for color conversions.
+
+##### 4.2.13.1 Components
+
+[X, Y, Z]
+
+- X: A number between 0 and 1 representing the X component of the color.
+
+- Y: A number between 0 and 1 representing the Y component of the color.
+
+- Z: A number between 0 and 1 representing the Z component of the color.
+
+Example 16
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "xyz-d65",
+"components": [0.5929, 0.2848, 0.9699],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the XYZ-D65 color space, see Colorimetry, Fourth Edition. CIE 015:2018.
+
+#### 4.2.14 XYZ-D50
+
+XYZ-D50 is similar to XYZ-D65, but uses the D50 illuminant.
+
+##### 4.2.14.1 Components
+
+[X, Y, Z]
+
+- X: A number between 0 and 1 representing the X component of the color.
+
+- Y: A number between 0 and 1 representing the Y component of the color.
+
+- Z: A number between 0 and 1 representing the Z component of the color.
+
+Example 17
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Hot pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "xyz-d50",
+"components": [0.5791, 0.2831, 0.728],
+"alpha": 1,
+"hex": "#ff00ff"
+}
+}
+}
+
+For more information on the XYZ-D50 color space, see Colorimetry, Fourth Edition. CIE 015:2018.
+
+### 4.3 Future color space support
+
+Future versions of this spec may add support for additional color spaces, depending on adoption and support in design tools.
+
+## 5. Gamut mapping
+
+This section is non-normative.
+
+Gamut mapping is the process of converting colors from one color space to another.
+
+Gamut mapping is necessary when the source color space has a larger gamut than the target color space. This can happen when converting colors from a wide-gamut color space (like Display-P3) to a smaller gamut color space (like sRGB). Gamut mapping ensures that the colors are represented accurately in the target color space, even if some colors cannot be represented exactly.
+
+When transforming colors, translation tools MAY use the gamut mapping algorithm that best fits the use case. For example, if the goal is to preserve the appearance of colors, a perceptual gamut mapping algorithm may be used. If the goal is to preserve the exact color values, a saturation or relative colorimetric gamut mapping algorithm may be used.
+
+Token authors should be aware that the choice of gamut mapping algorithm can significantly affect the appearance of colors in the target color space. If colors need to be transformed between color spaces, it's important to validate the output of the translation tool to ensure that the colors are represented accurately and consistently.
+
+## 6. Interpolation
+
+This section is non-normative.
+
+In many cases, colors may be interpolated, or blended, to create new colors. For example, when creating a gradient, colors are often interpolated between two or more key colors.
+
+Interpolation can be done in different color spaces, and the choice of color space can affect the appearance of the resulting colors. Translation tools MAY use different interpolation methods depending on the color space and the desired effect. Authors should be aware of the implications of interpolation in different color spaces and validate interpolated colors to ensure they meet design requirements.
+
+## 7. Token naming
+
+This section is non-normative.
+
+### 7.1 Categorization
+
+There are 3 main categories of design tokens that we will continue to reference in this specification.
+
+#### 7.1.1 Base
+
+Base tokens are the lowest level tokens.
+
+Example 18
+
+{
+"color": {
+"green": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.67, 0.79, 0.74]
+}
+},
+"shadow": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0, 0],
+"alpha": 0.53
+}
+}
+}
+}
+
+#### 7.1.2 Alias
+
+A design token’s value MAY be a reference to another token. The same value MAY have multiple names or aliases.
+
+Example 19
+
+{
+"color": {
+"palette": {
+"black": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0, 0]
+}
+}
+},
+"text": {
+"base": {
+"$value": "{color.palette.black}"
+}
+}
+}
+}
+
+#### 7.1.3 Component
+
+Component-specific tokens provide design decisions at the component level and improve the separation of concerns in your token architecture.
+
+Example 20
+
+{
+"color": {
+"button": {
+"primary": {
+"$value": "{color.brand.primary}"
+}
+},
+"banner": {
+"background": {
+"$value": "{color.palette.black}"
+}
+}
+}
+}
+
+### 7.2 Naming strategies
+
+There are many naming options when it comes to design tokens, especially color type tokens. We’ve identified two that seem to be most commonly implemented, descriptive and numerical.
+
+#### 7.2.1 Base Tokens
+
+For Base tokens, here’s how they MAY be represented in each version:
+
+##### 7.2.1.1 Descriptive
+
+Descriptive names can be more emotional and human-friendly because they often relate to tangible things that people interact with, like grass or watermelon.
+
+Pros |
+Cons |
+
+Easier for some people to identify with, could be used to distinguish brand colors from product colors |
+Harder to determine the scale of colors (for example: which ones are lighter vs. darker? How well do they pair together?) |
+
+|
+Names may not be easily recognized by non-English speakers. For teams working across languages, this may not be a good choice |
+
+Example 21
+
+{
+"color": {
+"grass": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.67, 0.79, 0.74]
+}
+},
+"brand": {
+"watermelon": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.91, 0.28, 0.42]
+}
+}
+}
+}
+}
+
+##### 7.2.1.2 Numerical
+
+###### 7.2.1.2.1 Ordered scales
+
+Numerical tokens often follow a scale to help delineate how the colors progress. For example, when using an ordered scale, color.blue.500 may be the base color, where the lightest color value is color.blue.100, and the darkest value could be color.blue.900, and these values are ordered in increments of 100s in between. We recommend not using sequential numbers (ex: 1, 2, 3, 4) for scalability in case future colors need to be added in between two existing colors.
+
+Example 22
+
+{
+"color": {
+"green": {
+"400": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.42, 0.73, 0.63]
+}
+},
+"500": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.15, 0.56, 0.42]
+}
+},
+"600": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.07, 0.5, 0.36]
+}
+}
+}
+}
+}
+
+Numerical token names can also allow for further specificity when needed. For example, when creating neutral palette tokens (like grays), the scale may increase by increments of 25 instead of 100 at the lightest values, and then increment by 100 thereafter.
+
+Example 23
+
+{
+"color": {
+"gray": {
+"25": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.93, 0.93, 0.93],
+},
+},
+"50": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.87, 0.87, 0.87],
+},
+},
+"75": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.8, 0.8, 0.8],
+},
+},
+"100": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.73, 0.73, 0.73],
+},
+},
+// etc...
+},
+},
+}
+
+###### 7.2.1.2.2 Bounded scales
+
+Numerical tokens can also be named through bounded scales. These tokens utilize a distinguishing value based on the actual color used for the token, such as in HSL’s lightness value to vary shades of a tint.
+
+Example 24
+
+{
+"color": {
+"gray": {
+"22": {
+"$type": "color",
+"$value": {
+"colorSpace": "hsl",
+"components": [0, 0, 22]
+}
+},
+"49": {
+"$type": "color",
+"$value": {
+"colorSpace": "hsl",
+"components": [0, 0, 49]
+}
+},
+"73": {
+"$type": "color",
+"$value": {
+"colorSpace": "hsl",
+"components": [0, 0, 73]
+}
+},
+"99": {
+"$type": "color",
+"$value": {
+"colorSpace": "hsl",
+"components": [0, 0, 99]
+}
+}
+}
+}
+}
+
+###### 7.2.1.2.3 Computer generated scales
+
+Token names MAY also be generated by tools, where the user specifies the base name, and the tool appends scale numbers based on changes to the underlying value.
+
+Example 25
+
+// User specified name: color-green
+// Tool generated names for 6 steps of opacity
+{
+"color": {
+"green": {
+"10": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.13, 0.7, 0.67],
+"alpha": 0.1,
+},
+},
+"20": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.13, 0.7, 0.67],
+"alpha": 0.2,
+},
+},
+// etc...
+},
+},
+}
+
+Pros |
+Cons |
+
+Easy mapping between different tokens for color contrast. For example, all 100-400 tokens pair with 500-900 tokens in order to create accessible color combinations. |
+Less memorable and less obvious difference between tokens |
+
+If using bounded scales, the token name can help indicate something about the underlying value |
+|
+
+#### 7.2.2 Alias Tokens
+
+For Alias Tokens, we recommend grouping tokens with similar intentions by prioritizing the category + property within the name. For example, all background color Alias tokens would likely start with color.background.XXX.
+
+We recommend avoiding abbreviations. For example, use “background” instead of “bg”, to help with clarity.
+
+Here’s how alias tokens may be represented:
+
+Example 26
+
+{
+"color": {
+"background": {
+"error": {
+"$value": "{color.red.600}"
+},
+"success": {
+"$value": "{color.green.400}"
+}
+},
+"text": {
+"base": {
+"$value": "{color.palette.black}"
+},
+"errorHover": {
+"$value": "{color.red.700}"
+}
+}
+}
+}
+
+Color alias tokens could also be grouped by concept, like so:
+
+Example 27
+
+// These can be used for background, border, or text colors
+{
+"color": {
+"background": {
+"error": {
+"$value": "{color.red.600}",
+},
+"success": {
+"$value": "{color.green.400}",
+},
+},
+},
+}
+
+#### 7.2.3 Component Tokens
+
+Component-specific names should start with the component they support and be located close to the component code. They commonly refer to alias tokens and can be helpful when trying to use consistent styles across components while still maintaining separation of concerns.
+
+Example 28
+
+{
+"color": {
+"badge": {
+"background": {
+"error": {
+"$value": "{color.background.error}"
+},
+"success": {
+"$value": "{color.background.success}"
+}
+},
+"text": {
+"error": {
+"$value": "{color.text.error}"
+},
+"success": {
+"$value": "{color.text.success}"
+}
+}
+}
+}
+}
+
+## A. Issue summary
+
+There are no issues listed in this specification.
+
+## B. References
+
+### B.1 Normative references
+
+[CIELAB]
+
+ISO/CIE 11664-4:2019(E): Colorimetry — Part 4: CIE 1976 L*a*b* colour space. International Organization for Standardization (ISO), International Commission on Illumination (CIE). 2019. Published. URL: http://cie.co.at/publications/colorimetry-part-4-cie-1976-lab-colour-space-1
+
+[COLORIMETRY]
+
+Colorimetry, Fourth Edition. CIE 015:2018. CIE. 2018. URL: http://www.cie.co.at/publications/colorimetry-4th-edition
+
+[css-color-4]
+
+CSS Color Module Level 4. Tab Atkins Jr.; Chris Lilley; Lea Verou. W3C. 6 August 2026. CRD. URL: https://www.w3.org/TR/css-color-4/
+
+[hsl]
+
+HSL: light vs saturation. Steven Pemberton. 19 November 2009. URL: http://www.cwi.nl/~steven/css/hsl.html
+
+[Rec.2020]
+
+Recommendation ITU-R BT.2020-2: Parameter values for ultra-high definition television systems for production and international programme exchange . ITU. October 2015. URL: http://www.itu.int/rec/R-REC-BT.2020/en
+
+[RFC2119]
+
+Key words for use in RFCs to Indicate Requirement Levels. S. Bradner. IETF. March 1997. Best Current Practice. URL: https://www.rfc-editor.org/info/rfc2119/
+
+[RFC8174]
+
+Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words. B. Leiba. IETF. May 2017. Best Current Practice. URL: https://www.rfc-editor.org/info/rfc8174/
+
+[srgb]
+
+Multimedia systems and equipment - Colour measurement and management - Part 2-1: Colour management - Default RGB colour space - sRGB. IEC. URL: https://webstore.iec.ch/publication/6169
+
+↑
+
+Permalink
+
+Referenced in:
+
+-
+§ 3. Color terminology
+
+-
+§ 4.1 Format
+
+-
+§ 4.2.7 OKLAB
+
+-
+§ 4.2.9 Display P3
+
+-
+§ 5. Gamut mapping
+
+-
+§ 6. Interpolation
+
+Permalink
+
+Referenced in:
+
+-
+§ 4.1 Format
+
+-
+§ 4.2.3 HSL
+
+-
+§ 4.2.4 HWB
+
+-
+§ 4.2.8 OKLCH
+
+Permalink
+
+Referenced in:
+
+-
+§ 4.2.9 Display P3
+
+Permalink
+
+Referenced in:
+
+-
+§ 4.1 Format
+
+Permalink
+
+Referenced in:
+
+-
+§ 4.1.1 The none keyword
+
+-
+§ 4.2.3.1 Components
+
+Permalink
+
+Referenced in:
+
+-
+§ 4.2.3.1 Components
+
+Permalink
+
+Referenced in:
+
+-
+§ 3. Color terminology
+
+-
+§ 4.2.3.1 Components
+
+Permalink
+
+Referenced in:
+
+-
+§ 3. Color terminology
+
+Permalink
+
+Referenced in:
+
+-
+§ 4.1 Format

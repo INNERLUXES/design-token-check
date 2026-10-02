@@ -1,0 +1,3031 @@
+Source: https://tr.designtokens.org/format/
+Text taken from the saved page (Design Tokens Format Module); markup is flattened.
+
+Design Tokens Format Module 2025.10
+
+-
+-
+
+# Design Tokens Format Module 2025.10
+
+Draft Community Group Report
+08 September 2026
+
+Latest published version:
+
+https://www.designtokens.org/TR/2025.10/format/
+
+Editors:
+
+Louis Chenais
+
+Kathleen McMahon
+
+Drew Powers
+
+Matthew Ström-Awn
+
+Donna Vitan
+
+Authors:
+
+Daniel Banks
+
+Mike Kamminga
+
+Ayesha Mazrana (Mazumdar)
+
+James Nash
+
+Adekunle Oduye
+
+Kevin Powell
+
+Feedback:
+
+GitHub design-tokens/community-group
+(pull requests,
+new issue,
+open issues)
+
+## Abstract
+
+This document describes the technical specification for a file format to
+exchange design tokens between different tools.
+
+## Status of This Document
+
+This is a
+preview
+
+Do not attempt to implement this version of the specification. Do not
+reference this version as authoritative in any way.
+
+This specification was published by the
+Design Tokens Community Group. It is not a W3C Standard nor is it
+on the W3C Standards Track.
+
+Please note that under the
+W3C Community Contributor License Agreement (CLA)
+there is a limited opt-out and other conditions apply.
+
+Learn more about
+W3C Community and Business Groups.
+
+This section describes the status of this document at the time of its
+publication. Other documents may supersede this document. A list of
+current W3C Community Group reports and the latest revision of this
+report can be found in the W3C Community Group reports index at
+https://www.w3.org/community/reports/.
+
+⚠️ This is a preview draft of in progress changes. Do
+not refer to this document directly, and do not implement anything in
+this document.
+
+GitHub Issues are preferred for
+discussion of this specification.
+
+## 1. Conformance
+
+As well as sections marked as non-normative, all authoring guidelines, diagrams, examples, and notes in this specification are non-normative. Everything else in this specification is normative.
+
+The key words MAY, MUST, MUST NOT, SHOULD, and SHOULD NOT in this document
+are to be interpreted as described in
+BCP 14
+[RFC2119] [RFC8174]
+when, and only when, they appear in all
+capitals, as shown here.
+
+## 2. Introduction
+
+This section is non-normative.
+
+Design tokens are a methodology for expressing design decisions in a
+platform-agnostic way so that they can be shared across different
+disciplines, tools, and technologies. They help establish a common
+vocabulary across organizations.
+
+There is a growing ecosystem of tools for design system maintainers and
+consumers that incorporate design token functionality, or would benefit
+from doing so:
+
+-
+Design tools have begun allowing designers to label and reference
+shared values for design properties like colors and sizes.
+
+-
+Translation tools exist that can convert source design token data
+into platform-specific source code that can directly be used by
+developers.
+
+-
+Documentation tools can display design token names rather than the
+raw values in design specs and style guides.
+
+It is often desirable for design system teams to integrate such tools
+together, so that design token data can flow between design and
+development tools.
+
+For example:
+
+-
+Extracting design tokens from design files and feeding them into
+translation tools to then be converted into platform-specific code
+
+-
+Maintaining a "single source of truth" for design tokens and
+automatically keeping design and development tools in sync with it
+
+While many tools now offer APIs to access design tokens or the ability
+to export design tokens as a file, these are all tool-specific. The
+burden is therefore on design system teams to create and maintain their
+own, bespoke "glue" code or workflows. Furthermore, if teams want to
+migrate to different tools, they will need to update those integrations.
+
+This specification aims to facilitate better interoperability between
+tools and thus lower the work design system teams need to do to
+integrate them by defining a standard file format for expressing design
+token data.
+
+## 3. Terminology
+
+These definitions are focused on the technical aspects of the specification, aimed at implementers such as design tool vendors. Definitions for designers and developers are available at designtokens.org.
+
+### 3.1 (Design) Token
+
+A (Design) Token is information associated with a human readable name, at minimum a name/value pair.
+
+For example:
+
+- color-text-primary: #000000;
+
+- font-size-heading-level-1: 44px;
+
+The name may be associated with additional Token Properties.
+
+### 3.2 (Design) Token Properties
+
+Information associated with a token name.
+
+For example:
+
+- Value
+
+- Type
+
+- Description
+
+Additional metadata may be added by tools and design systems to extend the format as needed.
+
+### 3.3 Design tool
+
+A design tool is a tool for visual design creation and editing.
+
+For example:
+
+- Bitmap image manipulation programs:
+- Photoshop
+
+- Affinity Photo
+
+- Paint.net
+
+- Vector graphics tools:
+- Illustrator
+
+- Inkscape
+
+- UI design, wireframing and prototyping tools:
+- Adobe XD
+
+- UXPin
+
+- Sketch
+
+- Figma
+
+- Penpot
+
+- ...
+
+### 3.4 Translation tool
+
+Design token translation tools translate token data from one format to another.
+
+For example:
+
+- Style Dictionary
+
+- Terrazzo
+
+- ...
+
+### 3.5 Documentation tool
+
+A documentation tool is a tool for documenting design tokens usage.
+
+For example:
+
+- Storybook
+
+- Zeroheight
+
+- Backlight
+
+- Supernova
+
+- Knapsack
+
+- ...
+
+### 3.6 Type
+
+A token's type is a predefined categorization applied to the token's value.
+
+For example:
+
+- Color
+
+- Size
+
+- Duration
+
+Token tools can use Types to infer the purpose of a token.
+
+For example:
+
+- A translation tool might reference a token's type to convert the source value into the correct platform-specific format.
+
+- A visual design tool might reference type to present tokens in the appropriate part of their UI - as in, color tokens are listed in the color picker, font tokens in the text styling UI's fonts list, and so on.
+
+### 3.7 Group
+
+A group is a set of tokens belonging to a specific category.
+
+For example:
+
+- Brand
+
+- Alert
+
+- Layout
+
+Groups are arbitrary and tools SHOULD NOT use them to infer the type or purpose of design tokens.
+
+### 3.8 Alias (Reference)
+
+A design token's value can be a reference to another token. The same value can have multiple names or aliases.
+
+The following Sass example illustrates this concept:
+
+$color-palette-black: #000000;
+$color-text-primary: $color-palette-black;
+
+The value of $color-text-primary is #000000, because $color-text-primary references $color-palette-black. We can also say $color-text-primary is an alias for $color-palette-black.
+
+### 3.9 Composite (Design) Token
+
+A design token whose value is made up of multiple, named child values. Composite tokens are useful for closely related style properties that are always applied together. For example, a typography style might be made up of a font name, font size, line height, and color.
+
+Here's an example of a composite shadow token:
+
+{
+"shadow-token": {
+"$type": "shadow",
+"$value": {
+"color": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0, 0],
+"alpha": 0.5,
+"hex": "#000000"
+}
+},
+"offsetX": { "value": 0.5, "unit": "rem" },
+"offsetY": { "value": 0.5, "unit": "rem" },
+"blur": { "value": 1.5, "unit": "rem" },
+"spread": { "value": 0, "unit": "rem" }
+}
+}
+}
+
+## 4. File format
+
+Design token files are JSON (https://www.json.org/) files that adhere to the structure described in this specification.
+
+JSON was chosen as an interchange format on the basis of:
+
+- Broad support in many programming languages' standard libraries. This is expected to lower barriers to entry for developers writing software that supports design token files.
+
+- Current popularity and widespread use. This is expected to lower the learning curve as many people will already be familiar with JSON.
+
+- Being text-based (rather than binary) allows hand-editing design token files without needing specialized software other than a basic text editor. It also means the files are somewhat human-readable.
+
+### 4.1 Media type (MIME type)
+
+When serving design token files via HTTP / HTTPS or in any other scenario where a media type (formerly known as MIME type) needs to be specified, the following MIME type SHOULD be used for design token files:
+
+- application/design-tokens+json
+
+However, since every design token file is a valid JSON file, they MAY be served using the JSON media type: application/json. The above, more specific media type is preferred and SHOULD be used wherever possible.
+
+Tools that can open design token files MUST support both media types.
+
+### 4.2 File extensions
+
+When saving design token files on a local file system, it can be useful to have a distinct file extension as this makes them easier to spot in file browsers. It may also help to associate a file icon and a preferred application for opening those files. The following file extensions are recommended by this spec:
+
+- .tokens
+
+- .tokens.json
+
+The former is more succinct. However, until this format is widely adopted and supported, the latter might be useful to make design token files open in users' preferred JSON editors.
+
+Tools that can open design token files MAY filter available files (e.g. in an open file dialog) to only show ones using those extensions. It is recommended to also provide users with a way of opening files that do not use those extensions (e.g. a "show all files" option or similar).
+
+Tools that can save design token files SHOULD append one of the recommended file extensions to the filename when saving.
+
+Editor's note: JSON schema
+
+The group is currently exploring the addition of a JSON Schema to support the spec.
+
+Editor's note: JSON file size limitations
+
+A concern about file size limitations of JSON files was raised by one of the vendors. The working group continues to gather feedback about any limitations the JSON format imposes.
+
+## 5. Design token
+
+### 5.1 Name and value
+
+Example 1: Minimal file with single design token
+
+{
+"token name": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 0, 0]
+}
+}
+}
+
+An object with a $value property is a token. Thus, $value is a reserved word in our spec, meaning you can't have a token whose name is "$value". The parent object's key is the token name.
+
+A token's name MUST be a valid JSON string as defined in [RFC8259].
+
+The example above therefore defines 1 design token with the following properties:
+
+- Name: "token name"
+
+- Type: "color"
+
+- Value:
+- Color Space: "srgb"
+
+- Components: [1, 0, 0]
+
+Name and value are both required.
+
+Token names are case-sensitive, so the following example with 2 tokens in the same group whose names only differ in case is valid:
+
+Example 2
+
+{
+"font-size": {
+"$value": { "value": 3, "unit": "rem" },
+"$type": "dimension"
+},
+
+"FONT-SIZE": {
+"$value": {
+"value": 16,
+"unit": "px"
+},
+"$type": "dimension"
+}
+}
+
+However, some tools MAY need to transform names when exporting to other languages or displaying names to the user, so having token names that differ only in case is likely to cause identical and undesirable duplicates in the output. For example, a translation tool that converts these tokens to Sass code would generate problematic output like this:
+
+Example 3
+
+$font-size: 3rem;
+$font-size: 16px;
+
+// The 2nd $font-size overrides the 1st one, so the 1st token
+// has essentially been lost.
+
+Tools MAY display a warning when token names differ only by case.
+
+#### 5.1.1 Character restrictions
+
+All properties defined by this format are prefixed with the dollar sign ($). This convention will also be used for any new properties introduced by future versions of this spec. Therefore, token and group names MUST NOT begin with the $ character.
+
+Furthermore, due to the syntax used for token aliases the following characters MUST NOT be used anywhere in a token or group name:
+
+- { (left curly bracket)
+
+- } (right curly bracket)
+
+- . (period)
+
+### 5.2 Additional properties
+
+While $value is the only required property for a token, a number of additional properties MAY be added:
+
+#### 5.2.1 Description
+
+A plain text description explaining the token's purpose can be provided via the optional $description property. Tools MAY use the description in various ways.
+
+For example:
+
+- Style guide generators MAY display the description text alongside a visual preview of the token
+
+- IDEs MAY display the description as a tooltip for auto-completion (similar to how API docs are displayed)
+
+- Design tools MAY display the description as a tooltip or alongside tokens wherever they can be selected
+
+- Translation tools MAY render the description to a source code comment alongside the variable or constant they export.
+
+The value of the $description property MUST be a plain JSON string, for example:
+
+Example 4
+
+{
+"Button background": {
+"$type": "color",
+"$description": "The background color for buttons in their normal state.",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.467, 0.467, 0.467]
+}
+}
+}
+
+#### 5.2.2 Type
+
+Design tokens always have an unambiguous type, so that tools can reliably interpret their value.
+
+A token's type can be specified by the optional $type property. If the $type property is not set on a token, then the token's type MUST be determined as follows:
+
+- If the token's value is a reference, then its type is the resolved type of the token being referenced.
+
+- Otherwise, if any of the token's parent groups have a $type property, then the token's type is inherited from the closest parent group with a $type property.
+
+- Otherwise, if none of the parent groups have a $type property, the token's type cannot be determined and the token MUST be considered invalid.
+
+Tools MUST NOT attempt to guess the type of a token by inspecting the contents of its value.
+
+The $type property can be set on different levels:
+
+- at the group level
+
+- at the token level
+
+The $type property MUST be a plain JSON string, whose value is one of the values specified in this specification's respective type definitions. The value of $type is case-sensitive.
+
+For example:
+
+Example 5
+
+{
+"Button background": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.467, 0.467, 0.467]
+}
+}
+}
+
+#### 5.2.3 Extensions
+
+The optional $extensions property is an object where tools MAY add proprietary, user-, team- or vendor-specific data to a design token. When doing so, each tool MUST use a vendor-specific key whose value MAY be any valid JSON data.
+
+- The keys SHOULD be chosen such that they avoid the likelihood of a naming clash with another vendor's data. The reverse domain name notation is recommended for this purpose.
+
+- Tools that process design token files MUST preserve any extension data they do not themselves understand. For example, if a design token contains extension data from tool A and the file containing that data is opened by tool B, then tool B MUST include the original tool A extension data whenever it saves a new design token file containing that token.
+
+Example 6
+
+{
+"Button background": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.467, 0.467, 0.467]
+},
+"$extensions": {
+"org.example.tool-a": 42,
+"org.example.tool-b": {
+"turn-up-to-11": true
+}
+}
+}
+}
+
+In order to maintain interoperability between tools that support this format, teams and tools SHOULD restrict their usage of extension data to optional meta-data that is not crucial to understanding that token's value.
+
+Tool vendors are encouraged to publicly share specifications of their extension data wherever possible. That way other tools can add support for them without needing to reverse engineer the extension data. Popular extensions could also be incorporated as standardized features in future revisions of this specification.
+
+Editor's note: Extensions section
+
+The extensions section is not limited to vendors. All token users can add additional data in this section for their own purposes.
+
+#### 5.2.4 Deprecated
+
+The $deprecated property MAY be used to mark a token as deprecated, and optionally explain the reason. Reasons to deprecate tokens include but are not limited to the following:
+
+- A future update to the design system will remove this token
+
+- Removing the token now may break existing support
+
+- This token is discouraged from future use
+
+Example 7
+
+{
+"Button background": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0.467, 0.467, 0.467],
+"hex": "#777777"
+},
+"$type": "color",
+"$deprecated": true
+},
+"Button focus": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0.44, 0.753, 1],
+"hex": "#70c0ff"
+},
+"$type": "color",
+"$deprecated": "Please use the border style for active buttons instead."
+}
+}
+
+Value |
+Explanation |
+
+true |
+This token is deprecated (no explanation provided). |
+
+String |
+This token is deprecated AND this is an explanation. |
+
+false |
+This token is NOT deprecated (may override group defaults). |
+
+Tool makers MAY augment the string when it contains aliases such as the one given as an example. A tool could potentially resolve the token, and link to docs, code, or render a visual representation of it and link to the new token inside a UI. For example, “Please use {button.activeBorder} instead“ could be output in JS as:
+
+Example 8
+
+/**
+* @deprecated Please use {@link file://./my-tokens.js:85 button.activeBorder} instead.
+*/
+
+Or
+
+Example 9
+
+/**
+* @deprecated Please use {@link https://docs.ds/tokens/#button-activeborder button.activeBorder} instead.
+*/
+
+## 6. Groups
+
+Groups organize design tokens into logical collections and provide a hierarchical structure for token files. Groups are arbitrary and tools SHOULD NOT use them to infer the type or purpose of design tokens.
+
+### 6.1 Group Structure
+
+A group is identified as a JSON object that does NOT contain a $value property. Groups MAY contain:
+
+- Child tokens - Objects with a $value property
+
+- Nested groups - Objects without a $value property
+
+- Group properties - Properties prefixed with $ (e.g., $description, $type)
+
+Important: The presence of a $value property definitively identifies an object as a token. If an object contains both $value and child tokens/groups, this creates an invalid structure where the object cannot be both a token and a group simultaneously. Tools MUST report this as an error.
+
+### 6.2 Root Tokens in Groups
+
+Groups MAY contain a root token alongside child tokens and nested groups. A root token provides a base value for the group while allowing for variants or extensions.
+
+Groups support root tokens using the reserved name $root as the token name:
+
+Example 10: Root tokens
+
+{
+"color": {
+"accent": {
+"$root": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.867, 0, 0],
+"hex": "#dd0000",
+},
+// {color.accent.$root} resolves to {"colorSpace": "srgb", "components": [0.867, 0, 0], "hex": "#dd0000"} (the root token)
+// {color.accent} is an invalid token reference (refers to a group, not a token)
+},
+"light": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 0.133, 0.133],
+"hex": "#ff2222",
+},
+},
+"dark": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.667, 0, 0],
+"hex": "#aa0000",
+},
+},
+},
+},
+}
+
+Rationale: Using $root as a reserved token name eliminates ambiguity between group references and token references while maintaining clear, explicit syntax. The $ prefix prevents naming conflicts with user-defined tokens and aligns with other reserved properties in the specification.
+
+### 6.3 Group Properties
+
+Groups MAY include the following properties:
+
+Property |
+Required |
+Description |
+
+$description |
+No |
+A plain JSON string describing the group's purpose |
+
+$type |
+No |
+Acts as a default type for tokens within the group that do not explicitly declare their own type. Type inheritance applies to nested groups and their tokens unless overridden |
+
+$extends |
+No |
+Inherits tokens and properties from another group. See Extending Groups for details |
+
+$deprecated |
+No |
+Marks the group as deprecated. Value can be true, false, or a string explanation |
+
+$extensions |
+No |
+Vendor-specific extensions where tools MAY add proprietary data |
+
+Example 11: Group description
+
+{
+"spacing": {
+"$description": "All spacing-related design tokens organized by usage context",
+"margin": {
+/* tokens */
+},
+"padding": {
+/* tokens */
+},
+},
+}
+
+Example 12: Group type inheritance
+
+{
+"color": {
+"$type": "color",
+"primary": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.4, 0.8],
+"hex": "#0066cc"
+}
+},
+"secondary": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0.4, 0.6, 1],
+"hex": "#6699ff"
+}
+},
+"semantic": {
+"success": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.8, 0.4],
+"hex": "#00cc66"
+}
+},
+"warning": { "$type": "string", "$value": "amber" }
+}
+}
+}
+
+#### 6.3.1 $deprecated
+
+Groups MAY include an optional $deprecated property to mark the entire group as deprecated. This extends to all child tokens within the group unless explicitly overridden.
+
+Value |
+Explanation |
+
+true |
+This group is deprecated (no explanation provided) |
+
+string |
+This group is deprecated AND this is an explanation |
+
+false |
+This group is NOT deprecated (may override parent group defaults) |
+
+#### 6.3.2 $extensions
+
+Groups MAY include an optional $extensions property where tools MAY add proprietary, user-, team- or vendor-specific data. Each tool MUST use a vendor-specific key whose value MAY be any valid JSON data.
+
+### 6.4 Extending Groups
+
+Groups MAY include an optional $extends property to inherit tokens and properties from another group. $extends MUST NOT reference a token. The $extends property is syntactic sugar for JSON Schema's $ref keyword and follows the same semantic behavior as defined in [json-schema-2020-12].
+
+Example 13: Group extension
+
+{
+"button": {
+"$type": "color",
+"background": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.4, 0.8],
+"hex": "#0066cc"
+}
+},
+"text": {
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 1, 1],
+"hex": "#ffffff"
+}
+}
+},
+"button-primary": {
+"$extends": "{button}",
+"background": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0.8, 0, 0.4],
+"hex": "#cc0066"
+}
+}
+}
+}
+
+#### 6.4.1 Equivalence to JSON Schema $ref
+
+The $extends property is semantically equivalent to JSON Schema's $ref keyword as specified in [json-schema-2020-12] and later versions. The following two group definitions are functionally identical:
+
+Using $extends (Design Token syntax):
+
+{
+"button-primary": {
+"$extends": "{button}",
+"background": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0.8, 0, 0.4],
+"hex": "#cc0066"
+}
+},
+"focus": {
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 0.2, 0.6],
+"hex": "#ff3399"
+}
+}
+}
+}
+
+Using $ref (JSON Schema syntax):
+
+{
+"button-primary": {
+"$ref": "#/button",
+"background": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0.8, 0, 0.4],
+"hex": "#cc0066"
+}
+},
+"focus": {
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 0.2, 0.6],
+"hex": "#ff3399"
+}
+}
+}
+}
+
+#### 6.4.2 Reference Resolution and Evaluation
+
+Extension resolution follows a straightforward process:
+
+- Find the target: Resolve the $extends reference to locate the target group
+
+- Copy inherited content: Start with all tokens and properties from the target group
+
+- Apply local overrides: Replace any inherited tokens/properties where local ones exist at the same path
+
+- Add new content: Include any local tokens/properties that don't exist in the inherited group
+
+This creates a new resolved group that combines inherited and local content according to the override rules above.
+
+Note: Implementation
+
+While this specification references JSON Schema $ref behavior for technical implementation guidance, the user-visible behavior is the straightforward deep merge described above. Tools may implement this merge behavior directly or by leveraging JSON Schema libraries.
+
+#### 6.4.3 Inheritance Semantics
+
+Group extension follows deep merge behavior where local properties override inherited properties at the same path:
+
+- Inheritance: All tokens and properties from the referenced group are inherited (circular references are not allowed)
+
+- Override: Local tokens and properties replace inherited ones with the same path
+
+- Addition: Local tokens and properties with new paths are added alongside inherited ones
+
+Override Rules:
+
+- Same path = override: If both the inherited group and local group define a token at the same path, the local definition wins
+
+- Different paths = merge: Tokens at different paths coexist in the final result
+
+- Complete replacement: When overriding, the entire token definition is replaced (not merged property-by-property)
+
+Example 14: Override example
+
+{
+"input": {
+"field": {
+"width": {
+"$type": "dimension",
+"$value": { "value": 12, "unit": "rem" },
+},
+"background": {
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 1, 1],
+"hex": "#ffffff",
+},
+},
+},
+},
+"input-amount": {
+"$extends": "{input}",
+"field": {
+"width": { "$value": "100px" }, // Overrides field.width completely
+},
+},
+}
+
+Result for input-amount:
+
+Token |
+Final Value |
+
+field.width |
+"100px" (local override wins) |
+
+field.background |
+{"colorSpace": "srgb", "components": [1, 1, 1], "hex": "#ffffff"} (inherited, no local override) |
+
+Multi-level Override Example:
+
+Example 15: Multi-level override
+
+{
+"base": {
+"color": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.2, 0.8],
+"hex": "#0033cc"
+}
+},
+"spacing": {
+"$type": "dimension",
+"$value": { "value": 16, "unit": "px" }
+}
+},
+"extended": {
+"$extends": "{base}",
+// Overrides base.color
+"color": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0.9, 0.05, 0],
+"hex": "#e60d00"
+}
+},
+// Adds new token
+"border": {
+"$type": "border",
+"$value": {
+"width": { "value": 1, "unit": "px" },
+"style": "solid",
+"color": "{extended.color}"
+}
+}
+}
+}
+
+Result for extended:
+
+Token |
+Final Value |
+Source |
+
+extended.color |
+#e60d00 |
+overridden |
+
+extended.spacing |
+16px |
+inherited |
+
+extended.border |
+1px solid #e60d00 |
+added |
+
+#### 6.4.4 Circular Reference Prevention
+
+Groups MUST NOT create circular inheritance chains. The following patterns are invalid:
+
+Example 16: Invalid circular reference
+
+{
+"button": {
+"color": {
+"$type": "color",
+"$value": { "colorSpace": "srgb", "components": [0.4, 0.2, 0.6] },
+},
+"secondary": {
+"$extends": "{button}", // ❌ Invalid: circular reference
+},
+},
+}
+
+Example 17: Another circular reference
+
+{
+"groupA": {
+"$extends": "{groupB}",
+"token": {
+"$value": 1,
+"$type": "number",
+},
+},
+"groupB": {
+"$extends": "{groupA}", // ❌ Invalid: circular reference
+"token": {
+"$value": 2,
+"$type": "number",
+},
+},
+}
+
+Valid inheritance patterns:
+
+Example 18: Valid inheritance patterns
+
+{
+"button": {
+"color": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 1, 1],
+"hex": "#00ffff",
+},
+},
+"border": {
+"$type": "border",
+"$value": {
+"width": { "value": 1, "unit": "px" },
+"style": "solid",
+"color": "{button.color}",
+},
+},
+},
+"button-secondary": {
+"$extends": "{button}", // ✅ Valid: references parent group
+"color": {
+"$type": "color",
+"$value": { "colorSpace": "srgb", "components": [0.4, 0.4, 0.4] },
+},
+},
+"button-large": {
+"$extends": "{button}", // ✅ Valid: siblings can reference same parent
+"padding": { "$value": { "value": 16, "unit": "px" } },
+},
+}
+
+#### 6.4.5 Supported Reference Formats
+
+$extends supports the same reference formats as design token aliases.
+
+#### 6.4.6 Error Conditions
+
+$extends error handling follows JSON Schema $ref error patterns:
+
+- Unresolvable references: When the target group cannot be found
+
+- Invalid targets: When the reference points to a non-group (e.g., a token)
+
+- Circular references: When extension chains create cycles
+
+- Constraint violations: When local properties violate inherited constraints
+
+Tools MUST implement the same error detection and reporting patterns used by JSON Schema validators for $ref resolution.
+
+#### 6.4.7 Implementation Guidance
+
+Tools implementing design token parsing MAY choose to:
+
+- Transform to $ref: Convert $extends to standard JSON Schema $ref syntax and use existing JSON Schema libraries for validation
+
+- Native implementation: Implement $extends directly using the same algorithms as JSON Schema $ref processing
+
+- Hybrid approach: Use JSON Schema libraries for validation while maintaining design token-specific reference syntax
+
+Regardless of implementation approach, the semantic behavior MUST be equivalent to JSON Schema $ref as specified in JSON Schema 2020-12 or later.
+
+#### 6.4.8 Relationship to JSON Schema Specifications
+
+This specification defines $extends as syntactic sugar for JSON Schema's $ref keyword, providing design token-specific reference syntax while maintaining equivalent behavior. The deep merge semantics described above align with how JSON Schema 2020-12 handles $ref with sibling properties.
+
+For implementers familiar with JSON Schema, the $extends behavior is equivalent to:
+
+- Converting "$extends": "{group}" to "$ref": "#/group"
+
+- Applying JSON Schema 2020-12 $ref resolution with sibling property evaluation
+
+Tools implementing this specification MAY choose to:
+
+- Transform approach: Convert $extends to $ref and use JSON Schema libraries
+
+- Direct implementation: Implement the deep merge behavior described above
+
+- Hybrid approach: Use JSON Schema for validation while maintaining design token syntax
+
+Regardless of implementation approach, the user-visible behavior MUST match the deep merge semantics described in this specification.
+
+### 6.5 Empty Groups
+
+Groups MAY be empty (contain no tokens or nested groups). While they may appear to serve no immediate purpose, they:
+
+- Cause no harm to processing or validation
+
+- Support work-in-progress organization during token development
+
+- May contain metadata via group properties ($description, $extensions)
+
+- Provide placeholder structure for future token development
+
+Example 19: Empty group
+
+{
+"experimental": {
+"$description": "Tokens for experimental features - currently empty",
+"$deprecated": "This group is being phased out"
+}
+}
+
+Note: Token vs Group Ambiguity
+
+Objects without a $value property are interpreted as groups by definition. This can potentially create ambiguity in cases where a token lacks required properties (such as $value or a determinable type) and might be incorrectly parsed as an empty group. Tools SHOULD provide clear error messages when an object appears to be an incomplete token rather than an intentional empty group.
+
+### 6.6 References and JSON Pointer Integration
+
+The current token reference syntax using curly braces ({group.token}) is maintained for backward compatibility and developer ergonomics. However, tools MUST also support JSON Pointer notation for advanced use cases.
+
+#### 6.6.1 Current Reference Syntax
+
+Example 20: Current reference syntax
+
+{
+"base": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.4, 0.8],
+"hex": "#0066cc"
+}
+},
+"alias": { "$value": "{base}" }
+}
+
+#### 6.6.2 JSON Pointer Support
+
+Tools MUST support JSON Pointer references as defined by [rfc6901], using the $ref property:
+
+Example 21: JSON Pointer references
+
+{
+"base": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.4, 0.8],
+"hex": "#0066cc"
+}
+},
+"alias": { "$ref": "#/base" }
+}
+
+### 6.7 Processing Rules
+
+#### 6.7.1 Token Resolution Order
+
+When processing groups, tools MUST follow this resolution order:
+
+- Local tokens - Direct children with $value properties
+
+- Root tokens - Tokens with $root names
+
+- Extended tokens - Tokens inherited via $extends (if not overridden)
+
+- Nested groups - Process recursively
+
+#### 6.7.2 Path Construction
+
+Token paths are constructed by concatenating group names and token names with periods (.). The reserved token name $root is included in the path to maintain explicit, unambiguous references.
+
+Examples:
+
+Location |
+Path |
+Notes |
+
+/color/accent/$root |
+color.accent.$root |
+Token path |
+
+/color/accent/light |
+color.accent.light |
+Token path |
+
+/color/accent |
+— |
+Invalid for token resolution, valid for groups |
+
+#### 6.7.3 Type Inheritance
+
+Type resolution follows these rules in order of precedence:
+
+- Token's explicit $type property (highest precedence)
+
+- Resolved group's $type property (after extension resolution)
+
+- Parent group's $type property (walking up the hierarchy)
+
+- Token is invalid if no type can be determined
+
+Type Resolution with Extensions:
+Since $extends follows JSON Schema $ref semantics, type inheritance behavior is determined by constraint validation rather than explicit merge rules. Local type constraints are evaluated alongside inherited constraints according to JSON Schema validation patterns.
+
+Example 22: Type resolution with extensions
+
+{
+"base": {
+"$type": "color",
+"primary": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.4, 0.8],
+"hex": "#0066cc",
+},
+},
+},
+"extended": {
+"$extends": "{base}",
+"$type": "dimension", // Local constraint
+"spacing": { "$value": { "value": 16, "unit": "px" } },
+},
+}
+
+In this example, the group extended must satisfy both its local $type: "dimension" constraint and any applicable constraints from the referenced base group, following JSON Schema constraint resolution rules.
+
+#### 6.7.4 Circular Reference Detection
+
+Tools MUST detect and throw an error on circular references in:
+
+- Token aliases ({token} references)
+
+- Group extensions ($extends references)
+
+- JSON Pointer references ($ref properties, if supported)
+
+Circular reference detection for $extends follows the same requirements as JSON Schema $ref circular reference detection. Tools SHOULD implement the same algorithms used by JSON Schema validators for cycle detection.
+
+Example 23: Circular reference detection
+
+{
+"a": { "$extends": "{b}" },
+"b": { "$extends": "{c}" },
+"c": { "$extends": "{a}" }, // Creates circular reference: a → b → c → a
+}
+
+Tools MUST report this as an error affecting groups a, b, and c.
+
+### 6.8 Migration and Compatibility
+
+This specification is designed to be backward compatible with existing design token files. Tools implementing this specification:
+
+- MUST continue to support existing group syntax
+
+- SHOULD provide warnings for deprecated patterns
+
+- MAY implement new features incrementally
+
+- MUST validate that token names do not conflict with reserved properties
+
+### 6.9 Examples
+
+#### 6.9.1 Basic Group with Root Token
+
+Example 24: Basic group with root token
+
+{
+"spacing": {
+"$type": "dimension",
+"$description": "Base spacing scale",
+"$root": { "$value": { "value": 16, "unit": "px" } },
+"small": { "$value": { "value": 8, "unit": "px" } },
+"large": { "$value": { "value": 32, "unit": "px" } }
+}
+}
+
+#### 6.9.2 Group Extension with Override Example
+
+Example 25: Group extension with override
+
+{
+"input": {
+"$type": "dimension",
+"field": {
+"width": { "$value": { "value": 100, "unit": "%" } },
+"background": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 1, 1],
+"hex": "#ffffff"
+}
+}
+}
+},
+"input-amount": {
+"$extends": "{input}",
+"field": {
+"width": { "$value": { "value": 100, "unit": "px" } }
+}
+}
+}
+
+Resolved tokens:
+
+- {input-amount.field.width} → { "value": 100, "unit": "px" } (overridden)
+
+- {input-amount.field.background} → #ffffff (inherited from input)
+
+This demonstrates the key use case where a component extends a base component but overrides specific tokens while inheriting others.
+
+#### 6.9.3 Complex Hierarchical Structure
+
+Example 26: Complex hierarchical structure
+
+{
+"color": {
+"$type": "color",
+"$description": "Complete color system",
+"brand": {
+"$root": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.4, 0.8],
+"hex": "#0066cc"
+}
+},
+"strong": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0.2, 0.533, 0.867],
+"hex": "#3388dd"
+}
+},
+"subdued": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.267, 0.6],
+"hex": "#004499"
+}
+}
+},
+"semantic": {
+"$extends": "{color.brand}",
+"success": {
+"$root": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.8, 0.4],
+"hex": "#00cc66"
+}
+},
+"strong": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0.2, 0.867, 0.533],
+"hex": "#33dd88"
+}
+},
+"subdued": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.6, 0.267],
+"hex": "#009944"
+}
+}
+},
+"error": {
+"$root": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0.8, 0, 0],
+"hex": "#cc0000"
+}
+},
+"strong": {
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 0.2, 0.2],
+"hex": "#ff3333"
+}
+},
+"subdued": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0.6, 0, 0],
+"hex": "#990000"
+}
+}
+}
+}
+}
+}
+
+This structure creates tokens accessible as:
+
+Token Reference |
+Resolved Value |
+
+{color.brand.$root} |
+{"colorSpace": "srgb", "components": [0, 0.4, 0.8], "hex": "#0066cc"} |
+
+{color.brand.strong} |
+{"colorSpace": "srgb", "components": [0.2, 0.533, 0.867], "hex": "#3388dd"} |
+
+{color.semantic.success.$root} |
+{"colorSpace": "srgb", "components": [0, 0.8, 0.4], "hex": "#00cc66"} |
+
+{color.semantic.error.subdued} |
+{"colorSpace": "srgb", "components": [0.6, 0, 0], "hex": "#990000"} |
+
+### 6.10 Use-cases
+
+#### 6.10.1 File authoring & organization
+
+Groups let token file authors better organize their token files. Related tokens can be nested into groups to align with the team's naming conventions and/or mental model. When manually authoring files, using groups is also less verbose than a flat list of tokens with repeating prefixes.
+
+For example:
+
+Example 27: Organized token groups
+
+{
+"brand": {
+"color": {
+"$type": "color",
+"acid green": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 1, 0.4]
+}
+},
+"hot pink": {
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 0, 1]
+}
+}
+},
+"typeface": {
+"$type": "fontFamily",
+"primary": {
+"$value": "Comic Sans MS"
+},
+"secondary": {
+"$value": "Times New Roman"
+}
+}
+}
+}
+
+...is likely to be more convenient to type and, arguably, easier to read, than:
+
+Example 28: Flat token structure
+
+{
+"brand-color-acid-green": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 1, 0.4]
+}
+},
+"brand-color-hot-pink": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 0, 1]
+}
+},
+"brand-typeface-primary": {
+"$value": "Comic Sans MS",
+"$type": "fontFamily"
+},
+"brand-typeface-secondary": {
+"$value": "Times New Roman",
+"$type": "fontFamily"
+}
+}
+
+#### 6.10.2 GUI tools
+
+Tools that let users pick or edit tokens via a GUI MAY use the grouping structure to display a suitable form of progressive disclosure, such as a collapsible tree view.
+
+Figure 1 Progressive disclosure groups
+
+#### 6.10.3 Translation tools
+
+Token names are not guaranteed to be unique within the same file. The same name can be used in different groups. Also, translation tools MAY need to export design tokens in a uniquely identifiable way, such as variables in code. Translation tools SHOULD therefore use design tokens' paths as these are unique within a file.
+
+For example, a translation tool like Style Dictionary might use the following design token file:
+
+Example 29: Translation tool input
+
+{
+"brand": {
+"color": {
+"$type": "color",
+"acid green": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 1, 0.4]
+}
+},
+"hot pink": {
+"$value": {
+"colorSpace": "srgb",
+"components": [1, 0, 1]
+}
+}
+},
+"typeface": {
+"$type": "fontFamily",
+"primary": {
+"$value": "Comic Sans MS"
+},
+"secondary": {
+"$value": "Times New Roman"
+}
+}
+}
+}
+
+...and output it as Sass variables like so by concatenating the path to create variable names:
+
+Example 30: Translation tool output
+
+$brand-color-acid-green: #00ff66;
+$brand-color-hot-pink: #ff00ff;
+$brand-typeface-primary: 'Comic Sans MS';
+$brand-typeface-secondary: 'Times New Roman';
+
+## 7. Aliases / References
+
+Instead of having explicit values, tokens can reference the value of another token. To put it another way, a token can be an alias for another token. This spec considers the terms "alias" and "reference" to be synonyms and uses them interchangeably.
+
+Aliases are useful for:
+
+- Expressing design choices
+
+- Eliminating repetition of values in token files (DRYing up the code)
+
+- Creating semantic relationships between tokens
+
+- Maintaining consistency across related values
+
+### 7.1 Reference Syntax
+
+Design tokens support two distinct syntaxes for referencing content within token files:
+
+#### 7.1.1 Curly Brace Syntax (Token References)
+
+The curly brace syntax is specifically designed for referencing complete token values and always resolves to the $value property of the target token.
+
+Example 31: Alias Syntax
+
+{
+"colors": {
+"blue": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.4, 0.8],
+"hex": "#0066cc"
+},
+"$type": "color"
+}
+},
+"semantic": {
+"primary": {
+"$value": "{colors.blue}",
+"$type": "color"
+}
+}
+}
+
+In this example, {colors.blue} resolves to the entire color object {"colorSpace": "srgb", "components": [0, 0.4, 0.8], "hex": "#0066cc"}.
+
+Important: Curly brace references can ONLY target complete tokens (objects with $value properties), not individual properties within token values or arbitrary document locations.
+
+#### 7.1.2 JSON Pointer Syntax (Required Support)
+
+For advanced use cases requiring access to specific properties within token values or other parts of the document structure, tools MUST support JSON Pointer notation as defined by [rfc6901], using the $ref property. Tools implementing this specification MUST support JSON Pointer syntax.
+
+Example 32
+
+{
+"colors": {
+"blue": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.4, 0.8],
+"hex": "#0066cc"
+},
+"$type": "color"
+}
+},
+"semantic": {
+"primary": {
+"$ref": "#/colors/blue"
+},
+"primaryHue": {
+"$value": { "$ref": "#/colors/blue/$value/components/0" },
+"$type": "number"
+}
+}
+}
+
+In this example:
+
+- "$ref": "#/colors/blue" references the entire token, making semantic.primary an alias for colors.blue
+
+- "$ref": "#/colors/blue/$value/components/0" accesses just the first component (0) of the blue color
+
+Key Differences:
+
+Aspect |
+Curly Brace {token} |
+JSON Pointer $ref |
+
+Targets |
+Complete tokens only |
+Any document location |
+
+Implicit path |
+Always appends /$value |
+Explicit full path required |
+
+Use case |
+Token-to-token references |
+Property-level references |
+
+Syntax |
+{group.token} |
+#/group/token/$value |
+
+### 7.2 Reference Resolution
+
+When a tool needs the actual value of a token it MUST resolve the reference - i.e. lookup the token being referenced and fetch its value. Tools SHOULD preserve references and therefore only resolve them whenever the actual value needs to be retrieved. For instance, in a design tool, changes to the value of a token being referenced by aliases SHOULD be reflected wherever those aliases are being used.
+
+#### 7.2.1 Resolution Algorithms
+
+For Curly Brace References:
+
+- Parse reference: Extract token path from {group.token}
+
+- Split path: Convert to segments ["group", "token"]
+
+- Navigate to token: Find the target token object
+
+- Validate token: Ensure target has $value property
+
+- Return token value: Extract and return the $value content
+
+- Check for cycles: Maintain stack of resolving references
+
+For JSON Pointer References:
+
+- Parse JSON Pointer: Extract path segments from #/path/to/target
+
+- Traverse document: Navigate through each path segment
+
+- Apply JSON Pointer rules:
+- Numeric segments in array contexts become array indices
+
+- All segments in object contexts become property names
+
+- Handle escaped characters (~0, ~1)
+
+- Validate target: Ensure the final target exists and is accessible
+
+- Return value: Extract and return the resolved value
+
+#### 7.2.2 Chained References
+
+Aliases MAY reference other aliases. In this case, tools MUST follow each reference until they find a token with an explicit value.
+
+Example 33: Chained References
+
+{
+"base": {
+"primary": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0.4, 0.8],
+"hex": "#0066cc"
+},
+"$type": "color"
+}
+},
+"semantic": {
+"brand": {
+"$value": "{base.primary}"
+},
+"link": {
+"$value": "{semantic.brand}"
+}
+}
+}
+
+In this example, {semantic.link} resolves to the same color value as {base.primary} by following the chain: semantic.link → semantic.brand → base.primary.
+
+#### 7.2.3 Circular References
+
+References MUST NOT be circular. If a design token file contains circular references, then the value of all tokens in that chain is unknown and an appropriate error or warning message SHOULD be displayed to the user.
+
+Example 34
+
+{
+"a": { "$value": "{b}" },
+"b": { "$value": "{c}" },
+"c": { "$value": "{a}" } // Creates circular reference: a → b → c → a
+}
+
+Tools MUST detect and report this as an error affecting all tokens in the circular chain.
+
+### 7.3 Property-Level References
+
+JSON Pointer syntax enables references to specific properties within composite tokens, not just entire token values. This enables fine-grained reuse of token components while maintaining semantic relationships.
+
+Important: Property-level references require JSON Pointer syntax ($ref) and cannot be expressed using curly brace syntax.
+
+#### 7.3.1 Color Component References
+
+Example 35: Color Component References
+
+{
+"base": {
+"blue": {
+"$value": {
+"colorSpace": "srgb",
+"components": [0.2, 0.4, 0.9],
+"hex": "#3366e6"
+},
+"$type": "color"
+}
+},
+"semantic": {
+// semantic.primary keeps the same red and green components as base.blue
+// but uses a different blue component (0.7)
+"primary": {
+"$value": {
+"colorSpace": "srgb",
+"components": [
+{ "$ref": "#/base/blue/$value/components/0" },
+{ "$ref": "#/base/blue/$value/components/1" },
+0.7
+],
+"hex": "#3366b3"
+},
+"$type": "color"
+},
+// semantic.secondary keeps the same red and green components as base.blue
+// but uses a different blue component (0.5)
+"secondary": {
+"$value": {
+"colorSpace": "srgb",
+"components": [
+{ "$ref": "#/base/blue/$value/components/0" },
+{ "$ref": "#/base/blue/$value/components/1" },
+0.5
+],
+"hex": "#336680"
+},
+"$type": "color"
+}
+// Changes to the hue of base.blue will automatically propagate
+// to both semantic colors
+}
+}
+
+#### 7.3.2 Dimension Component References
+
+Example 36: Dimension Component References
+
+{
+"base": {
+"spacing": {
+"$value": { "value": 16, "unit": "px" },
+"$type": "dimension"
+}
+},
+"layout": {
+"small": {
+"$value": {
+"value": { "$ref": "#/base/spacing/$value/value" },
+"unit": "rem"
+},
+"$type": "dimension"
+},
+"large": {
+"$value": {
+"value": 32,
+"unit": { "$ref": "#/base/spacing/$value/unit" }
+},
+"$type": "dimension"
+}
+}
+}
+
+In this example:
+
+- layout.small uses the same numeric value as base.spacing (16) but with a different unit (rem)
+
+- layout.large uses the same unit as base.spacing (px) but with a different numeric value (32)
+
+#### 7.3.3 Typography Component References
+
+Example 37: Typography Component References
+
+{
+"base": {
+"text": {
+"$value": {
+"fontFamily": ["Helvetica", "Arial", "sans-serif"],
+"fontSize": { "value": 16, "unit": "px" },
+"fontWeight": 400,
+"lineHeight": 1.5
+},
+"$type": "typography"
+}
+},
+"headings": {
+"h1": {
+"$value": {
+"fontFamily": { "$ref": "#/base/text/$value/fontFamily" },
+"fontSize": { "value": 32, "unit": "px" },
+"fontWeight": 700,
+"lineHeight": { "$ref": "#/base/text/$value/lineHeight" }
+},
+"$type": "typography"
+},
+"h2": {
+"$value": {
+"fontFamily": { "$ref": "#/base/text/$value/fontFamily" },
+"fontSize": { "value": 24, "unit": "px" },
+"fontWeight": 600,
+"lineHeight": { "$ref": "#/base/text/$value/lineHeight" }
+},
+"$type": "typography"
+}
+}
+}
+
+In this example:
+
+- Both headings inherit the fontFamily and lineHeight from base.text
+
+- Each heading defines its own fontSize and fontWeight
+
+- Changes to the base font family or line height automatically affect all headings
+
+### 7.4 JSON Pointer Path Construction and Resolution
+
+JSON Pointer syntax provides direct access to any location within the design token document structure, following standard JSON Pointer rules as defined by [rfc6901].
+
+#### 7.4.1 Path Construction Rules
+
+- Root reference: #/ (refers to the document root)
+
+- Object properties: / separates each level (e.g., #/group/token/$value)
+
+- Array indices: Numeric indices for array elements (e.g., #/color/$value/components/0)
+
+- Special characters: Must be escaped according to JSON Pointer rules:
+- ~ becomes ~0
+
+- / becomes ~1
+
+#### 7.4.2 Token Value Access Patterns
+
+Since design tokens store their values in $value properties, JSON Pointer paths to token values follow a predictable pattern:
+
+JSON Pointer |
+Equivalent Curly Brace Reference |
+Description |
+
+#/colors/blue/$value |
+{colors.blue} |
+Complete token value |
+
+#/colors/blue/$value/hex |
+N/A |
+Hex property of color |
+
+#/colors/blue/$value/components/0 |
+N/A |
+First component of color |
+
+#/colors/blue/$type |
+N/A |
+Token type metadata |
+
+#### 7.4.3 Resolution Algorithm for JSON Pointer
+
+- Parse JSON Pointer: Extract path segments from #/path/to/target
+
+- Traverse document: Navigate through each path segment
+
+- Apply JSON Pointer rules:
+- Numeric segments in array contexts become array indices
+
+- All segments in object contexts become property names
+
+- Handle escaped characters (~0, ~1)
+
+- Validate target: Ensure the final target exists and is accessible
+
+- Return value: Extract and return the resolved value
+
+#### 7.4.4 Curly Brace Resolution Algorithm
+
+- Parse reference: Extract token path from {group.token}
+
+- Split path: Convert to segments ["group", "token"]
+
+- Navigate to token: Find the target token object
+
+- Validate token: Ensure target has $value property
+
+- Return token value: Extract and return the $value content
+
+- Check for cycles: Maintain stack of resolving references
+
+#### 7.4.5 Error Conditions
+
+Tools MUST report errors for:
+
+- Invalid syntax: Malformed curly braces or JSON Pointer syntax
+
+- Unresolvable paths: Target path does not exist in document
+
+- Invalid token references: Curly brace syntax targeting non-tokens
+
+- Circular references: Reference chains that loop back to themselves
+
+- Type mismatches: Referenced value incompatible with expected type
+
+#### 7.4.6 Path Examples
+
+Token Path |
+JSON Pointer |
+Curly Brace Syntax |
+
+Root token "primary" |
+#/primary |
+{primary} |
+
+Nested token |
+#/colors/blue |
+{colors.blue} |
+
+Array element |
+#/color/components/0 |
+not supported |
+
+Property with space |
+#/brand colors/primary |
+{brand colors.primary} |
+
+Property with slash |
+#/my~1group/token |
+{my/group.token} |
+
+### 7.5 Implementation Guidance
+
+#### 7.5.1 For Tool Authors
+
+Tools implementing design token parsing MUST:
+
+- Support curly brace syntax as the primary reference mechanism for token-to-token references
+
+- Support JSON Pointer syntax for document-level references and property access
+
+- Validate reference targets to ensure they point to valid tokens (for curly brace) or valid document locations (for JSON Pointer)
+
+- Resolve references according to the resolution algorithms defined in this specification (Resolution Algorithms)
+
+- Detect circular references before attempting resolution
+
+- Preserve references in memory/storage and resolve only when values are needed
+
+- Propagate changes from referenced tokens to all aliases
+
+#### 7.5.2 Disambiguation Examples
+
+Example 38
+
+{
+"ambiguous": {
+"data": [10, 20, 30],
+"metadata": {
+"0": "Info about first item",
+"1": "Info about second item"
+}
+}
+}
+
+Clear resolution:
+
+Reference |
+Result |
+Notes |
+
+#/ambiguous/data/0 |
+10 |
+JSON Pointer array index |
+
+{ambiguous.metadata.0} |
+"Info about first item" |
+curly brace object property |
+
+{ambiguous.data.0} |
+Error |
+curly braces cannot access array indices |
+
+{ambiguous.metadata.2} |
+Error |
+property "2" doesn't exist |
+
+#### 7.5.3 Error Conditions
+
+Tools MUST report errors for:
+
+- Invalid reference syntax: Malformed curly braces or JSON Pointer syntax
+
+- Unresolvable references: Target path does not exist
+
+- Circular references: Reference chains that loop back to themselves
+
+- Type mismatches: Referenced property type incompatible with token type
+
+- Invalid property paths: Attempting to reference non-existent properties
+
+### 7.6 Relationship to JSON Schema
+
+The reference syntax defined in this specification provides compatibility with JSON Schema patterns while serving the specific needs of design token authoring:
+
+- JSON Pointer compatibility: Direct support for RFC 6901 JSON Pointer notation enables integration with JSON Schema tooling
+
+- Design token semantics: Curly brace references provide token-specific syntax optimized for common token-to-token relationships
+
+- Complementary approaches: Both syntaxes serve different use cases within the design token ecosystem
+
+Important: While JSON Pointer references ($ref) in design tokens follow the same syntax as JSON Schema $ref, curly brace references ({token}) are design token-specific and provide different semantics (automatic $value resolution and token-only targeting) compared to standard JSON Schema references.
+
+This specification provides a flexible, standards-based approach to token references that balances author ergonomics with technical precision, enabling both simple token aliases and sophisticated property-level relationships.
+
+## 8. Types
+
+Many tools need to know what kind of value a given token represents to process it sensibly. Translation tools MAY need to convert or format tokens differently depending on their type. Design tools MAY present the user with different kinds of input when editing tokens of a certain type (such as color picker, slider, text input, etc.). Style guide generators MAY use different kinds of previews for different types of tokens.
+
+This spec defines a number of design-focused types and every design token MUST use one of these types. Furthermore, that token's value MUST then follow rules and syntax for the chosen type as defined by this spec.
+
+A token's type can be set directly by giving it a $type property specifying the chosen type. Alternatively, it can inherit a type from one of its parent groups, or be an alias of a token that has the desired type.
+
+If no explicit type has been set for a token, tools MUST consider the token invalid and not attempt to infer any other type from the value.
+
+If an explicit type is set, but the value does not match the expected syntax then that token is invalid and an appropriate error SHOULD be displayed to the user. To put it another way, the $type property is a declaration of what kind of values are permissible for the token. (This is similar to typing in programming languages like Java or TypeScript, where a value not compatible with the declared type causes a compilation error).
+
+### 8.1 Color
+
+Represents a color in the UI. For details on how to represent colors, see the Color module.
+
+### 8.2 Dimension
+
+Represents an amount of distance in a single dimension in the UI, such as a position, width, height, radius, or thickness. The $type property MUST be set to the string dimension. The value MUST be an object containing a numeric value (integer or floating-point) and unit of measurement ("px" or "rem").
+
+Key |
+Type |
+Required |
+Description |
+
+value |
+number |
+Y |
+An integer or floating-point value representing the numeric value. |
+
+unit |
+string |
+Y |
+Unit of distance. Supported values: "px", "rem". |
+
+For example:
+
+Example 39
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"spacing-stack-0": {
+"$value": {
+"value": 0,
+"unit": "px"
+},
+"$type": "dimension"
+},
+"spacing-stack-1": {
+"$value": {
+"value": 0.5,
+"unit": "rem"
+},
+"$type": "dimension"
+}
+}
+
+#### 8.2.1 Validation
+
+- $value.unit may only be "px" or "rem".
+- px: Represents an idealized pixel on the viewport. The equivalent in Android is dp and iOS is pt. Translation tools SHOULD therefore convert to these or other equivalent units as needed.
+
+- rem: Represents a multiple of the system's default font size (which MAY be configurable by the user). 1rem is 100% of the default font size. The equivalent of 1rem on Android is 16sp. Not all platforms have an equivalent to rem, so translation tools MAY need to do a lossy conversion to a fixed px size by assuming a default font size (usually 16px) for such platforms.
+
+- $value.unit is still required even if $value.value is 0.
+
+### 8.3 Font family
+
+Issue 53: Type: font family Typography Type Enhancements
+
+A naive approach like the one below may be appropriate for the first stage of the specification, but this could be more complicated than it seems due to platform/OS/browser restrictions.
+
+Represents a font name or an array of font names (ordered from most to least preferred). The $type property MUST be set to the string fontFamily. The value MUST either be a string value containing a single font name or an array of strings, each being a single font name.
+
+For example:
+
+Example 40
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Primary font": {
+"$value": "Comic Sans MS",
+"$type": "fontFamily"
+},
+"Body font": {
+"$value": ["Helvetica", "Arial", "sans-serif"],
+"$type": "fontFamily"
+}
+}
+
+### 8.4 Font weight
+
+Represents a font weight. The $type property MUST be set to the string fontWeight. The value must either be a number value in the range [1, 1000] or one of the pre-defined string values defined in the table below.
+
+Lower numbers represent lighter weights, and higher numbers represent thicker weights, as per the OpenType wght tag specification. The pre-defined string values are aliases for specific numeric values. For example 100, "thin" and "hairline" are all the exact same value.
+
+numeric value |
+string value aliases |
+
+100 |
+thin, hairline |
+
+200 |
+extra-light, ultra-light |
+
+300 |
+light |
+
+400 |
+normal, regular, book |
+
+500 |
+medium |
+
+600 |
+semi-bold, demi-bold |
+
+700 |
+bold |
+
+800 |
+extra-bold, ultra-bold |
+
+900 |
+black, heavy |
+
+950 |
+extra-black, ultra-black |
+
+Number values outside of the [1, 1000] range and any other string values, including ones that differ only in case, are invalid and MUST be rejected by tools.
+
+Example:
+
+Example 41
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"font-weight-default": {
+"$value": 350,
+"$type": "fontWeight"
+},
+"font-weight-thick": {
+"$value": "extra-bold",
+"$type": "fontWeight"
+}
+}
+
+### 8.5 Duration
+
+Represents the length of time in milliseconds an animation or animation cycle takes to complete, such as 200 milliseconds. The $type property MUST be set to the string duration. The value MUST be an object containing a numeric value (either integer or floating-point) and a unit of milliseconds ("ms") or seconds ("s"). A millisecond is a unit of time equal to one thousandth of a second.
+
+Key |
+Type |
+Required |
+Description |
+
+value |
+number |
+Y |
+An integer or floating-point value representing the numeric value. |
+
+unit |
+string |
+Y |
+Unit of time. Supported values: "ms" (millisecond), "s"(second). |
+
+For example:
+
+Example 42
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Duration-Quick": {
+"$value": {
+"value": 100,
+"unit": "ms"
+},
+"$type": "duration"
+},
+"Duration-Long": {
+"$value": { "value": 1.5, "unit": "s" },
+"$type": "duration"
+}
+}
+
+#### 8.5.1 Validation
+
+- $value.unit may only be "ms" or "s"
+
+### 8.6 Cubic Bézier
+
+Represents how the value of an animated property progresses towards completion over the duration of an animation, effectively creating visual effects such as acceleration, deceleration, and bounce. The $type property MUST be set to the string cubicBezier. The value MUST be an array containing four numbers. These numbers represent two points (P1, P2) with one x coordinate and one y coordinate each [P1x, P1y, P2x, P2y]. The y coordinates of P1 and P2 can be any real number in the range [-∞, ∞], but the x coordinates are restricted to the range [0, 1].
+
+For example:
+
+Example 43
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"Accelerate": {
+"$value": [0.5, 0, 1, 1],
+"$type": "cubicBezier"
+},
+"Decelerate": {
+"$value": [0, 0, 0.5, 1],
+"$type": "cubicBezier"
+}
+}
+
+### 8.7 Number
+
+Represents a number. Numbers can be positive, negative and have fractions. Example uses for number tokens are gradient stop positions or unitless line heights. The $type property MUST be set to the string number. The value MUST be a JSON number value.
+
+Example 44
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"line-height-large": {
+"$value": 2.3,
+"$type": "number"
+}
+}
+
+### 8.8 Additional types
+
+This section is non-normative.
+
+Types still to be documented here are likely to include:
+
+- Font style: might be an enum of allowed values like ("normal", "italic"...)
+
+- Percentage/ratio: e.g. for opacity values, relative dimensions, aspect ratios, etc.
+- Not 100% sure about this since these are really "just" numbers. An alternative might be that we expand the permitted syntax for the "number" type, so for example "1:2", "50%" and 0.5 are all equivalent. People can then use whichever syntax they like best for a given token.
+
+- File: for assets - might just be a relative file path / URL (or should we let people also express the mime-type?)
+
+## 9. Composite types
+
+The types defined in the previous chapters such as color and dimension all have singular values. For example, the value of a color token is one color. However, there are other aspects of UI designs that are a combination of multiple values. For instance, a shadow style is a combination of a color, X & Y offsets, a blur radius and a spread radius.
+
+Every shadow style has the exact same parts (color, X & Y offsets, etc.), but their respective values will differ. Furthermore, each part's value (which is also known as a "sub-value") is always of the same type. A shadow's color must always be a color value, its X offset must always be a dimension value, and so on. Shadow styles are therefore combinations of values that follow a pre-defined structure. In other words, shadow styles are themselves a type. Types like this are called composite types.
+
+Specifically, a composite type has the following characteristics:
+
+- Its value is an object or array, potentially containing nested objects or arrays, following a pre-defined structure where the properties of the (nested) object(s) or the elements of the (nested) arrays are sub-values.
+
+- Sub-values may be explicit values (e.g. color values) or references to other design tokens that have the sub-value's type (e.g. "{some.other.token}").
+
+### 9.1 Array aliasing in composite types
+
+When a composite type contains array properties, each element in the array may be either an explicit value or a reference to a token of the appropriate type. References in arrays resolve to single values and do not cause array expansion or flattening. This allows for flexible composition where some array elements are references while others are explicit values.
+
+Array aliasing follows these principles:
+
+- Single value resolution: References in arrays always resolve to a single value of the appropriate type, never to arrays themselves.
+
+- No flattening: When referencing an array, the entire referenced array is treated as a single element in the referencing array.
+
+- Type safety: Each array element (explicit or referenced) must conform to the expected sub-value type for that composite type.
+
+- Mixed composition: Arrays may freely mix explicit values and references.
+
+For example, a shadow token with an array value can mix references to other shadow tokens with explicit shadow objects:
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"layered-shadow": {
+"$type": "shadow",
+"$value": [
+"{base.shadow}",
+{
+"color": "{brand.accent}",
+"offsetX": { "value": 4, "unit": "px" },
+"offsetY": { "value": 4, "unit": "px" },
+"blur": { "value": 8, "unit": "px" },
+"spread": { "value": 0, "unit": "px" }
+}
+]
+}
+}
+
+A design token whose type happens to be a composite type is sometimes also called a composite (design) token. Besides their type, there is nothing special about composite tokens. They can have all the other additional properties like $description or $extensions. They can also be referenced by other design tokens.
+
+Example 45: Composite token example
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"shadow-token": {
+"$type": "shadow",
+"$value": {
+"color": {
+"colorSpace": "srgb",
+"components": [0, 0, 0],
+"alpha": 0.5,
+"hex": "#000000"
+},
+"offsetX": { "value": 0.5, "unit": "rem" },
+"offsetY": { "value": 0.5, "unit": "rem" },
+"blur": { "value": 1.5, "unit": "rem" },
+"spread": { "value": 0, "unit": "rem" }
+}
+}
+}
+
+Example 46: Advanced composite token example
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"space": {
+"small": {
+"$type": "dimension",
+"$value": { "value": 0.5, "unit": "rem" }
+}
+},
+
+"color": {
+"shadow-050": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 0, 0],
+"alpha": 0.5,
+"hex": "#000000"
+}
+}
+},
+
+"shadow": {
+"medium": {
+"$type": "shadow",
+"$description": "A composite token where some sub-values are references to tokens that have the correct type and others are explicit values",
+"$value": {
+"color": "{color.shadow-050}",
+"offsetX": "{space.small}",
+"offsetY": "{space.small}",
+"blur": { "value": 1.5, "unit": "rem" },
+"spread": { "value": 0, "unit": "rem" }
+}
+}
+},
+
+"component": {
+"card": {
+"box-shadow": {
+"$description": "This token is an alias for the composite token {shadow.medium}",
+"$value": "{shadow.medium}"
+}
+}
+}
+}
+
+### 9.2 Groups versus composite tokens
+
+At first glance, groups and composite tokens might look very similar. However, they are intended to solve different problems and therefore have some important differences:
+
+- Groups are for arbitrarily grouping tokens for the purposes of naming and/or organization.
+- They impose no rules or restrictions on how many tokens or nested groups you put within them, what they are called, or what the types of the tokens within should be. As such, tools MUST NOT try to infer any special meaning or typing of tokens based on a group they happen to be in.
+
+- Different design systems are likely to group their tokens differently.
+
+- You can think of groups as containers that exist "outside" of design tokens.
+
+- Composite tokens are individual design tokens whose values are made up of several sub-values.
+- Since they are design tokens, they can be referenced by other design tokens. This is not true for groups.
+
+- Their type must be one of the composite types defined in this specification. Therefore their names and types of their sub-values are pre-defined. Adding additional sub-values or setting values that don't have the correct type make the composite token invalid.
+
+- Tools MAY provide specialized functionality for composite tokens. For example, a design tool may let the user pick from a list of all available shadow tokens when applying a drop shadow effect to an element.
+
+### 9.3 Stroke style
+
+Represents the style applied to lines or borders. The $type property MUST be set to the string strokeStyle. The value MUST be either:
+
+- a string value as defined in the corresponding section below, or
+
+- an object value as defined in the corresponding section below
+
+Issue 98: Stroke style type feedback Composite Type Feedback
+
+Is the current specification for stroke styles fit for purpose? Does it need more sub-values (e.g. equivalents to SVG's stroke-linejoin, stroke-miterlimit and stroke-dashoffset attributes)?
+
+#### 9.3.1 String value
+
+String stroke style values MUST be set to one of the following, pre-defined values:
+
+- solid
+
+- dashed
+
+- dotted
+
+- double
+
+- groove
+
+- ridge
+
+- outset
+
+- inset
+
+These values have the same meaning as the equivalent "line style" values in CSS. As per the CSS spec, their exact rendering is therefore implementation specific. For example, the length of dashes and gaps in the dashed style may vary between different tools.
+
+Example 47: String stroke style example
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"focus-ring-style": {
+"$type": "strokeStyle",
+"$value": "dashed"
+}
+}
+
+#### 9.3.2 Object value
+
+Object stroke style values MUST have the following properties:
+
+- dashArray: An array of dimension values and/or references to dimension tokens, which specify the lengths of alternating dashes and gaps. Each element in the array must be either an explicit dimension value or a reference to a dimension token. If an odd number of values is provided, then the list of values is repeated to yield an even number of values.
+
+- lineCap: One of the following pre-defined string values: "round", "butt" or "square". These values have the same meaning as those of the stroke-linecap attribute in SVG.
+
+Example 48: Object stroke style example
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"alert-border-style": {
+"$type": "strokeStyle",
+"$value": {
+"dashArray": [
+{ "value": 0.5, "unit": "rem" },
+{ "value": 0.25, "unit": "rem" }
+],
+"lineCap": "round"
+}
+}
+}
+
+Example 49: Object stroke style example using references
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"notification-border-style": {
+"$type": "strokeStyle",
+"$value": {
+"dashArray": ["{dash-length-medium}", { "value": 0.25, "unit": "rem" }],
+"lineCap": "butt"
+}
+},
+
+"mixed-dash-style": {
+"$type": "strokeStyle",
+"$value": {
+"dashArray": [
+"{dash-length-long}",
+"{dash-gap-short}",
+{ "value": 0.125, "unit": "rem" },
+"{dash-gap-short}"
+],
+"lineCap": "round"
+}
+},
+
+"dash-length-medium": {
+"$type": "dimension",
+"$value": {
+"value": 10,
+"unit": "px"
+}
+},
+
+"dash-length-long": {
+"$type": "dimension",
+"$value": { "value": 1, "unit": "rem" }
+},
+
+"dash-gap-short": {
+"$type": "dimension",
+"$value": { "value": 0.25, "unit": "rem" }
+}
+}
+
+#### 9.3.3 Fallbacks
+
+The string and object values are mutually exclusive means of expressing stroke styles. For example, some of the string values like inset or groove cannot be expressed in terms of a dashArray and lineCap as they require some implementation-specific means of lightening or darkening the color for portions of a border or outline. Conversely, a precisely defined combination of dashArray and lineCap sub-values is not guaranteed to produce the same visual result as the dashed or dotted keywords as they are implementation-specific.
+
+Furthermore, some tools and platforms may not support the full range of stroke styles that design tokens of this type can represent. When displaying or exporting a strokeStyle token whose value they don't natively support, they should therefore fallback to the closest approximation that they do support.
+
+The specifics of how a "closest approximation" is chosen are implementation-specific. However, the following examples illustrate what fallbacks tools MAY use in some scenarios.
+
+Example 50: Fallback for object stroke style
+
+CSS does not allow detailed control of the dash pattern or line caps on dashed borders. So, a tool exporting the "notification-border-style" design token from the example in the previous section, might use the CSS dashed line style as a fallback:
+
+:root {
+--notification-border-style: dashed;
+}
+
+Example 51: Fallback for string stroke style
+
+Some design tools like Figma don't support inset, outset or double style lines. When a user applies a stroke-style token with those values, such tools might therefore fallback to displaying a solid line instead.
+
+### 9.4 Border
+
+Represents a border style. The $type property MUST be set to the string border. The value MUST be an object with the following properties:
+
+- color: The color of the border. The value of this property MUST be a valid color value or a reference to a color token.
+
+- width: The width or thickness of the border. The value of this property MUST be a valid dimension value or a reference to a dimension token.
+
+- style: The border's style. The value of this property MUST be a valid stroke style value or a reference to a stroke style token.
+
+Example 52: Border composite token examples
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"border": {
+"heavy": {
+"$type": "border",
+"$value": {
+"color": {
+"colorSpace": "srgb",
+"components": [0.218, 0.218, 0.218]
+},
+"width": {
+"value": 3,
+"unit": "px"
+},
+"style": "solid"
+}
+},
+"focusring": {
+"$type": "border",
+"$value": {
+"color": "{color.focusring}",
+"width": {
+"value": 1,
+"unit": "px"
+},
+"style": {
+"dashArray": [
+{ "value": 0.5, "unit": "rem" },
+{ "value": 0.25, "unit": "rem" }
+],
+"lineCap": "round"
+}
+}
+}
+}
+}
+
+Issue 99: Border type feedback Composite Type Feedback
+
+Is the current specification for borders fit for purpose? Does it need more sub-values to account for features like outset, border images, multiple borders, etc. that some platforms and design tools have?
+
+### 9.5 Transition
+
+Represents a animated transition between two states. The $type property MUST be set to the string transition. The value MUST be an object with the following properties:
+
+- duration: The duration of the transition. The value of this property MUST be a valid duration value or a reference to a duration token.
+
+- delay: The time to wait before the transition begins. The value of this property MUST be a valid duration value or a reference to a duration token.
+
+- timingFunction: The timing function of the transition. The value of this property MUST be a valid cubic Bézier curve value or a reference to a cubic Bézier curve token.
+
+Example 53: Transition composite token examples
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"transition": {
+"emphasis": {
+"$type": "transition",
+"$value": {
+"duration": { "value": 200, "unit": "ms" },
+"delay": { "value": 0, "unit": "ms" },
+"timingFunction": [0.5, 0, 1, 1]
+}
+}
+}
+}
+
+Issue 103: Transition type feedback Composite Type Feedback
+
+Is the current specification for transitions fit for purpose? Are these transitions parameters by themselves useful considering that they don't let you specify what aspect of a UI is being transitioned and what the start and end states are?
+
+### 9.6 Shadow
+
+Represents a shadow style. The $type property MUST be set to the string shadow. The value MUST be either:
+
+- a single shadow object with the properties defined below, or
+
+- an array of shadow objects and/or references to shadow tokens
+
+When the value is an array, each element must be either an explicit shadow object or a reference to another shadow token. References in the array resolve to single shadow objects and do not cause array flattening.
+
+Each shadow object (whether explicit or referenced) MUST have the following properties:
+
+- color: The color of the shadow. The value of this property MUST be a valid color value or a reference to a color token.
+
+- offsetX: The horizontal offset that shadow has from the element it is applied to. The value of this property MUST be a valid dimension value or a reference to a dimension token.
+
+- offsetY: The vertical offset that shadow has from the element it is applied to. The value of this property MUST be a valid dimension value or a reference to a dimension token.
+
+- blur: The blur radius that is applied to the shadow. The value of this property MUST be a valid dimension value or a reference to a dimension token.
+
+- spread: The amount by which to expand or contract the shadow. The value of this property MUST be a valid dimension value or a reference to a dimension token.
+
+- inset: (optional) Whether this shadow is inside the containing shape (“inner shadow”), rather than a “drop shadow” or “box shadow” which is rendered outside the container (default, or false).
+
+Example 54: Shadow token example
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"shadow-token": {
+"$type": "shadow",
+"$value": {
+"color": {
+"colorSpace": "srgb",
+"components": [0, 0, 0],
+"alpha": 0.5
+},
+"offsetX": { "value": 0.5, "unit": "rem" },
+"offsetY": { "value": 0.5, "unit": "rem" },
+"blur": { "value": 1.5, "unit": "rem" },
+"spread": { "value": 0, "unit": "rem" }
+}
+},
+"layered-shadow": {
+"$type": "shadow",
+"$value": [
+{
+"color": {
+"colorSpace": "srgb",
+"components": [0, 0, 0],
+"alpha": 0.1
+},
+"offsetX": { "value": 0, "unit": "px" },
+"offsetY": { "value": 24, "unit": "px" },
+"blur": { "value": 22, "unit": "px" },
+"spread": { "value": 0, "unit": "px" }
+},
+{
+"color": {
+"colorSpace": "srgb",
+"components": [0, 0, 0],
+"alpha": 0.2
+},
+"offsetX": { "value": 0, "unit": "px" },
+"offsetY": { "value": 42.9, "unit": "px" },
+"blur": { "value": 44, "unit": "px" },
+"spread": { "value": 0, "unit": "px" }
+},
+{
+"color": {
+"colorSpace": "srgb",
+"components": [0, 0, 0],
+"alpha": 0.3
+},
+"offsetX": { "value": 0, "unit": "px" },
+"offsetY": { "value": 64, "unit": "px" },
+"blur": { "value": 64, "unit": "px" },
+"spread": { "value": 0, "unit": "px" }
+}
+]
+},
+
+"mixed-reference-shadow": {
+"$type": "shadow",
+"$value": [
+"{base.shadow}",
+{
+"color": "{brand.accent}",
+"offsetX": { "value": 2, "unit": "px" },
+"offsetY": { "value": 2, "unit": "px" },
+"blur": { "value": 4, "unit": "px" },
+"spread": { "value": 1, "unit": "px" }
+},
+"{highlight.shadow}"
+]
+},
+"inner-shadow": {
+"$type": "shadow",
+"$value": {
+"color": {
+"colorSpace": "srgb",
+"components": [0, 0, 0],
+"alpha": 0.5
+},
+"offsetX": { "value": 2, "unit": "px" },
+"offsetY": { "value": 2, "unit": "px" },
+"blur": { "value": 4, "unit": "px" },
+"spread": { "value": 0, "unit": "px" },
+"inset": true
+}
+}
+}
+
+Issue 100: Shadow type feedback Composite Type Feedback
+
+Is the current specification for shadows fit for purpose? Does it need to support multiple shadows, as some tools and platforms do?
+
+### 9.7 Gradient
+
+Represents a color gradient. The $type property MUST be set to the string gradient. The value MUST be an array of gradient stop objects and/or references to gradient tokens. Each element in the array must be either an explicit gradient stop object or a reference to a gradient token. References resolve to single gradient objects and do not cause array flattening.
+
+Each gradient stop object (whether explicit or referenced) MUST have the following structure:
+
+- color: The color value at the stop's position on the gradient. The value of this property MUST be a valid color value or a reference to a color token.
+
+- position: The position of the stop along the gradient's axis. The value of this property MUST be a valid number value or reference to a number token. The number values must be in the range [0, 1], where 0 represents the start position of the gradient's axis and 1 the end position. If a number value outside of that range is given, it MUST be considered as if it were clamped to the range [0, 1]. For example, a value of 42 should be treated as if it were 1, i.e. the end position of the gradient axis. Similarly, a value of -99 should be treated as if it were 0, i.e. the start position of the gradient axis.
+
+If there are no stops at the very beginning or end of the gradient axis (i.e. with position 0 or 1, respectively), then the color from the stop closest to each end should be extended to that end of the axis.
+
+Example 55: Gradient token example
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"blue-to-red": {
+"$type": "gradient",
+"$value": [
+{
+"color": {
+"colorSpace": "srgb",
+"components": [0, 0, 1]
+},
+"position": 0
+},
+{
+"color": {
+"colorSpace": "srgb",
+"components": [1, 0, 0]
+},
+"position": 1
+}
+]
+}
+}
+
+Describes a gradient that goes from blue to red:
+
+Example 56: Gradient token with omitted start stop example
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"mostly-yellow": {
+"$type": "gradient",
+"$value": [
+{
+"color": {
+"colorSpace": "srgb",
+"components": [1, 1, 0]
+},
+"position": 0.666
+},
+{
+"color": {
+"colorSpace": "srgb",
+"components": [1, 0, 0]
+},
+"position": 1
+}
+]
+}
+}
+
+Describes a gradient that is solid yellow for the first 2/3 and then fades to red:
+
+Example 57: Gradient token using references example
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"brand-primary": {
+"$type": "color",
+"$value": {
+"colorSpace": "srgb",
+"components": [0, 1, 0.4]
+}
+},
+
+"position-end": {
+"$type": "number",
+"$value": 1
+},
+
+"brand-in-the-middle": {
+"$type": "gradient",
+"$value": [
+{
+"color": {
+"colorSpace": "srgb",
+"components": [0, 0, 0]
+},
+"position": 0
+},
+{
+"color": "{brand-primary}",
+"position": 0.5
+},
+{
+"color": {
+"colorSpace": "srgb",
+"components": [0, 0, 0]
+},
+"position": "{position-end}"
+}
+]
+},
+
+"gradient-with-references": {
+"$type": "gradient",
+"$value": [
+"{gradient.start-stop}",
+{
+"color": "{brand.secondary}",
+"position": 0.333
+},
+"{gradient.end-stop}"
+]
+},
+
+"gradient": {
+"start-stop": {
+"$type": "gradient",
+"$value": [
+{
+"color": { "colorSpace": "srgb", "components": [1, 1, 1] },
+"position": 0
+}
+]
+},
+"end-stop": {
+"$type": "gradient",
+"$value": [
+{
+"color": { "colorSpace": "srgb", "components": [0, 0, 0] },
+"position": 1
+}
+]
+}
+}
+}
+
+Describes a color token called "brand-primary", which is referenced as the mid-point of a gradient is black at either end.
+
+Issue 101: Gradient type feedback Color Type Enhancements
+
+Is the current specification for gradients fit for purpose? Does it need to also specify the type of gradient (.e.g linear, radial, conical, etc.)?
+
+### 9.8 Typography
+
+Represents a typographic style. The $type property MUST be set to the string typography. The value MUST be an object with the following properties:
+
+- fontFamily: The typography's font. The value of this property MUST be a valid font family value or a reference to a font family token.
+
+- fontSize: The size of the typography. The value of this property MUST be a valid dimension value or a reference to a dimension token.
+
+- fontWeight: The weight of the typography. The value of this property MUST be a valid font weight or a reference to a font weight token.
+
+- letterSpacing: The horizontal spacing between characters. The value of this property MUST be a valid dimension value or a reference to a dimension token.
+
+- lineHeight: The vertical spacing between lines of typography. The value of this property MUST be a valid number value or a reference to a number token. The number SHOULD be interpreted as a multiplier of the fontSize.
+
+Example 58: Typography composite token examples
+
+{
+"$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+"type styles": {
+"heading-level-1": {
+"$type": "typography",
+"$value": {
+"fontFamily": "Roboto",
+"fontSize": {
+"value": 42,
+"unit": "px"
+},
+"fontWeight": 700,
+"letterSpacing": {
+"value": 0.1,
+"unit": "px"
+},
+"lineHeight": 1.2
+}
+},
+"microcopy": {
+"$type": "typography",
+"$value": {
+"fontFamily": "{font.serif}",
+"fontSize": "{font.size.smallest}",
+"fontWeight": "{font.weight.normal}",
+"letterSpacing": {
+"value": 0,
+"unit": "px"
+},
+"lineHeight": 1
+}
+}
+}
+}
+
+Issue 102: Typography type feedback Typography Type Enhancements
+
+Is the current specification for typography styles fit for purpose? Should the lineHeight sub-value use a number value, dimension or a new lineHeight type?
+
+## A. Issue summary
+
+- Issue 53: Type: font family
+- Issue 98: Stroke style type feedback
+- Issue 99: Border type feedback
+- Issue 103: Transition type feedback
+- Issue 100: Shadow type feedback
+- Issue 101: Gradient type feedback
+- Issue 102: Typography type feedback
+
+## B. References
+
+### B.1 Normative references
+
+[json-schema-2020-12]
+
+JSON Schema: A Media Type for Describing JSON Documents. Draft 2020-12. Austin Wright; Henry Andrews; Ben Hutton; Greg Dennis. Internet Engineering Task Force (IETF). 10 June 2022. Internet-Draft. URL: https://datatracker.ietf.org/doc/html/draft-bhutton-json-schema-01
+
+[RFC2119]
+
+Key words for use in RFCs to Indicate Requirement Levels. S. Bradner. IETF. March 1997. Best Current Practice. URL: https://www.rfc-editor.org/info/rfc2119/
+
+[rfc6901]
+
+JavaScript Object Notation (JSON) Pointer. P. Bryan, Ed.; K. Zyp; M. Nottingham, Ed. IETF. April 2013. Proposed Standard. URL: https://www.rfc-editor.org/info/rfc6901/
+
+[RFC8174]
+
+Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words. B. Leiba. IETF. May 2017. Best Current Practice. URL: https://www.rfc-editor.org/info/rfc8174/
+
+[RFC8259]
+
+The JavaScript Object Notation (JSON) Data Interchange Format. T. Bray, Ed. IETF. December 2017. Internet Standard. URL: https://www.rfc-editor.org/info/rfc8259/
+
+↑
+
+Permalink
+
+Referenced in:
+
+-
+§ 2. Introduction
+
+-
+§ 3. Terminology
+
+-
+§ 3.6 Type
+
+-
+§ 5.2.1 Description
+
+-
+§ 7.2 Reference Resolution
+
+-
+§ 8. Types
+
+-
+§ 9.2 Groups versus composite tokens
+
+-
+§ 9.3.3 Fallbacks
+
+-
+§ 9.4 Border
+
+Permalink
+
+Referenced in:
+
+-
+§ 2. Introduction (2)
+
+-
+§ 3.6 Type
+
+-
+§ 6.10.3 Translation tools
+
+Permalink
+
+Referenced in:
+
+-
+§ 2. Introduction

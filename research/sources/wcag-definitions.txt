@@ -1,0 +1,109 @@
+Source: https://www.w3.org/TR/WCAG22/#dfn-relative-luminance
+Excerpts of the saved page, in the order of the page: the three success criteria and the definitions of contrast ratio, large scale and relative luminance; markup is flattened.
+
+## Success Criterion 1.4.3 Contrast (Minimum)
+#### Success Criterion 1.4.3 Contrast (Minimum)
+
+Understanding Contrast (Minimum) |
+How to Meet Contrast (Minimum)
+(Level AA)
+
+The visual presentation of text and images of text has a contrast ratio of at least 4.5:1, except for the following:
+
+Large Text
+
+Large-scale text and images of large-scale text have a contrast ratio of at least 3:1;
+
+Incidental
+
+Text or images of text that are part of an inactive user interface component, that are pure decoration, that are not visible to anyone, or that are part of a picture that contains significant
+other visual content, have no contrast requirement.
+
+## Success Criterion 1.4.11 Non-text Contrast
+#### Success Criterion 1.4.11 Non-text Contrast
+
+Understanding Non-text Contrast |
+How to Meet Non-text Contrast
+(Level AA)
+
+The visual presentation of the following have a contrast ratio of at least 3:1 against adjacent color(s):
+
+User Interface Components
+
+Visual information required to identify user interface components and states, except for inactive components or where the appearance of the component is determined by the user agent and not modified by the author;
+
+Graphical Objects
+
+Parts of graphics required to understand the content, except when a particular presentation of graphics is essential to the information being conveyed.
+
+#### Success Criterion 1.4.12 Text Spacing
+
+## Success Criterion 2.5.8 Target Size (Minimum)
+#### Success Criterion 2.5.8 Target Size (Minimum)
+
+Understanding Target Size (Minimum) |
+How to Meet Target Size (Minimum)
+(Level AA)
+
+New
+
+The size of the target for pointer inputs is at least 24 by 24 CSS pixels, except when:
+
+Spacing
+
+Undersized targets (those less than 24 by 24 CSS pixels) are positioned so that if a 24 CSS pixel diameter circle is centered on the bounding box of each, the circles do not intersect another target or the circle for another undersized target;
+
+Equivalent
+
+## Definition: contrast ratio
+contrast ratio
+
+(L1 + 0.05) / (L2 + 0.05), where
+
+- L1 is the relative luminance of the lighter of the colors, and
+
+- L2 is the relative luminance of the darker of the colors.
+
+Note 1
+Contrast ratios can range from 1 to 21 (commonly written 1:1 to 21:1).
+
+Note 2
+Because authors do not have control over user settings as to how text is rendered
+(for example font smoothing or anti-aliasing), the contrast ratio for text can be
+
+## Definition: large scale (text)
+large scale (text)
+
+with at least 18 point or 14 point bold or font size that would yield equivalent size
+for Chinese, Japanese and Korean (CJK) fonts
+
+
+## Definition: relative luminance
+relative luminance
+
+the relative brightness of any point in a colorspace, normalized to 0 for darkest
+black and 1 for lightest white
+
+Note 1
+
+For the sRGB colorspace, the relative luminance of a color is defined as L = 0.2126
+* R + 0.7152 * G + 0.0722 * B where R, G and B are defined as:
+
+- if RsRGB <= 0.04045 then R = RsRGB/12.92 else R = ((RsRGB+0.055)/1.055) ^ 2.4
+
+- if GsRGB <= 0.04045 then G = GsRGB/12.92 else G = ((GsRGB+0.055)/1.055) ^ 2.4
+
+- if BsRGB <= 0.04045 then B = BsRGB/12.92 else B = ((BsRGB+0.055)/1.055) ^ 2.4
+
+and RsRGB, GsRGB, and BsRGB are defined as:
+
+- RsRGB = R8bit/255
+
+- GsRGB = G8bit/255
+
+- BsRGB = B8bit/255
+
+The "^" character is the exponentiation operator. (Formula taken from
+[SRGB].)
+
+Note 2
