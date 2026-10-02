@@ -1,0 +1,13 @@
+# Every change is reviewed by a maintainer.
+* @innerluxesdev
+
+# The thresholds come from the W3C, Apple and Android pages, and the readers and the checks decide every line of the report; changes need extra care.
+/src/data.js @innerluxesdev
+/research/ @innerluxesdev
+/src/json.js @innerluxesdev
+/src/color.js @innerluxesdev
+/src/dimension.js @innerluxesdev
+/src/tokens.js @innerluxesdev
+/src/rules.js @innerluxesdev
+/src/files.js @innerluxesdev
+/src/check.js @innerluxesdev
