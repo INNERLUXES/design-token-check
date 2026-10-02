@@ -1,0 +1,34 @@
+design-token-check: examples/tidewater-app/tokens.json
+tokens: 30 tokens (12 aliases), 19 groups
+rules: examples/tidewater-app/token-rules.json, 6 pairs, 5 targets, rem base 16
+themes: dark, light
+contrast: 12 checked, 11 pass, 1 fail
+  ok    light  Body text: color.light.text.primary on color.light.surface.default  16.69:1  needs 4.5:1
+  ok    dark   Body text: color.dark.text.primary on color.dark.surface.default  16.30:1  needs 4.5:1
+  ok    light  Secondary text: color.light.text.secondary on color.light.surface.default  7.58:1  needs 4.5:1
+  ok    dark   Secondary text: color.dark.text.secondary on color.dark.surface.default  12.02:1  needs 4.5:1
+  ok    light  Caption: color.light.text.muted on color.light.surface.default  4.76:1  needs 4.5:1
+  FAIL  dark   Caption: color.dark.text.muted on color.dark.surface.default  3.75:1  needs 4.5:1
+  ok    light  Section label: color.light.text.muted on color.light.surface.default  4.76:1  needs 3:1
+  ok    dark   Section label: color.dark.text.muted on color.dark.surface.default  3.75:1  needs 3:1
+  ok    light  Input border: color.light.border.input on color.light.surface.default  4.83:1  needs 3:1
+  ok    dark   Input border: color.dark.border.input on color.dark.surface.default  3.75:1  needs 3:1
+  ok    light  Focus ring: color.light.focus.ring on color.light.surface.default  5.17:1  needs 3:1
+  ok    dark   Focus ring: color.dark.focus.ring on color.dark.surface.default  7.02:1  needs 3:1
+touch targets: 5 checked
+  ok    ios      Primary button: size.touch.ios.button  44 pt  needs 44 pt
+  ok    ios      Tab bar item: size.touch.ios.tab  49 pt  needs 44 pt
+  ok    android  Primary button: size.touch.android.button  48 dp  needs 48 dp
+  FAIL  web      Icon button: size.touch.web.icon-button  20 px  needs 24 px
+  ok    web      Link row: size.touch.web.link-row  2.5 rem (rem x 16 = 40 px)  needs 24 px
+findings: 2 error, 0 warning
+
+ERROR    low-contrast  examples/tidewater-app/token-rules.json:26  color.dark.text.muted
+         Caption (dark): color.dark.text.muted (examples/tidewater-app/tokens.json:33, #64748b) on color.dark.surface.default (examples/tidewater-app/tokens.json:29, #0f172a) has a contrast ratio of 3.75:1; text needs at least 4.5:1 (WCAG 2.2 SC 1.4.3 Contrast (Minimum))
+         fix: Change color.dark.text.muted or color.dark.surface.default until the ratio is at least 4.5:1
+
+ERROR    small-target  examples/tidewater-app/tokens.json:57  size.touch.web.icon-button
+         Icon button (web): size.touch.web.icon-button is 20 px, below the 24 px minimum (WCAG 2.2 success criterion 2.5.8 Target Size (Minimum), level AA: 24 by 24 CSS pixels)
+         fix: Make size.touch.web.icon-button at least 24 px
+
+GATE: FAIL - 2 errors

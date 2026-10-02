@@ -1,0 +1,457 @@
+{
+  "tool": "design-token-check",
+  "version": "1.0.0",
+  "tokens": {
+    "file": "examples/tidewater-app/tokens.json",
+    "readable": true,
+    "tokens": 30,
+    "aliases": 12,
+    "groups": 19
+  },
+  "rules": {
+    "file": "examples/tidewater-app/token-rules.json",
+    "readable": true,
+    "problem": null,
+    "pairs": 6,
+    "targets": 5,
+    "remBase": 16
+  },
+  "themes": [
+    "dark",
+    "light"
+  ],
+  "contrast": [
+    {
+      "pair": "Body text",
+      "theme": "light",
+      "kind": "text",
+      "text": {
+        "sizePt": 16,
+        "weight": 400,
+        "large": false
+      },
+      "foreground": {
+        "token": "color.light.text.primary",
+        "hex": "#0b1f33",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 21
+      },
+      "background": {
+        "token": "color.light.surface.default",
+        "hex": "#ffffff",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 19
+      },
+      "ratio": 16.69,
+      "required": 4.5,
+      "criterion": "1.4.3 Contrast (Minimum)",
+      "pass": true,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 9
+    },
+    {
+      "pair": "Body text",
+      "theme": "dark",
+      "kind": "text",
+      "text": {
+        "sizePt": 16,
+        "weight": 400,
+        "large": false
+      },
+      "foreground": {
+        "token": "color.dark.text.primary",
+        "hex": "#f1f5f9",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 31
+      },
+      "background": {
+        "token": "color.dark.surface.default",
+        "hex": "#0f172a",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 29
+      },
+      "ratio": 16.3,
+      "required": 4.5,
+      "criterion": "1.4.3 Contrast (Minimum)",
+      "pass": true,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 10
+    },
+    {
+      "pair": "Secondary text",
+      "theme": "light",
+      "kind": "text",
+      "text": {
+        "sizePt": 15,
+        "weight": null,
+        "large": false
+      },
+      "foreground": {
+        "token": "color.light.text.secondary",
+        "hex": "#475569",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 22
+      },
+      "background": {
+        "token": "color.light.surface.default",
+        "hex": "#ffffff",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 19
+      },
+      "ratio": 7.58,
+      "required": 4.5,
+      "criterion": "1.4.3 Contrast (Minimum)",
+      "pass": true,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 17
+    },
+    {
+      "pair": "Secondary text",
+      "theme": "dark",
+      "kind": "text",
+      "text": {
+        "sizePt": 15,
+        "weight": null,
+        "large": false
+      },
+      "foreground": {
+        "token": "color.dark.text.secondary",
+        "hex": "#cbd5e1",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 32
+      },
+      "background": {
+        "token": "color.dark.surface.default",
+        "hex": "#0f172a",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 29
+      },
+      "ratio": 12.02,
+      "required": 4.5,
+      "criterion": "1.4.3 Contrast (Minimum)",
+      "pass": true,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 18
+    },
+    {
+      "pair": "Caption",
+      "theme": "light",
+      "kind": "text",
+      "text": {
+        "sizePt": 12,
+        "weight": null,
+        "large": false
+      },
+      "foreground": {
+        "token": "color.light.text.muted",
+        "hex": "#64748b",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 23
+      },
+      "background": {
+        "token": "color.light.surface.default",
+        "hex": "#ffffff",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 19
+      },
+      "ratio": 4.76,
+      "required": 4.5,
+      "criterion": "1.4.3 Contrast (Minimum)",
+      "pass": true,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 25
+    },
+    {
+      "pair": "Caption",
+      "theme": "dark",
+      "kind": "text",
+      "text": {
+        "sizePt": 12,
+        "weight": null,
+        "large": false
+      },
+      "foreground": {
+        "token": "color.dark.text.muted",
+        "hex": "#64748b",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 33
+      },
+      "background": {
+        "token": "color.dark.surface.default",
+        "hex": "#0f172a",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 29
+      },
+      "ratio": 3.75,
+      "required": 4.5,
+      "criterion": "1.4.3 Contrast (Minimum)",
+      "pass": false,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 26
+    },
+    {
+      "pair": "Section label",
+      "theme": "light",
+      "kind": "text",
+      "text": {
+        "sizePt": 20,
+        "weight": null,
+        "large": true
+      },
+      "foreground": {
+        "token": "color.light.text.muted",
+        "hex": "#64748b",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 23
+      },
+      "background": {
+        "token": "color.light.surface.default",
+        "hex": "#ffffff",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 19
+      },
+      "ratio": 4.76,
+      "required": 3,
+      "criterion": "1.4.3 Contrast (Minimum)",
+      "pass": true,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 33
+    },
+    {
+      "pair": "Section label",
+      "theme": "dark",
+      "kind": "text",
+      "text": {
+        "sizePt": 20,
+        "weight": null,
+        "large": true
+      },
+      "foreground": {
+        "token": "color.dark.text.muted",
+        "hex": "#64748b",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 33
+      },
+      "background": {
+        "token": "color.dark.surface.default",
+        "hex": "#0f172a",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 29
+      },
+      "ratio": 3.75,
+      "required": 3,
+      "criterion": "1.4.3 Contrast (Minimum)",
+      "pass": true,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 34
+    },
+    {
+      "pair": "Input border",
+      "theme": "light",
+      "kind": "ui",
+      "text": null,
+      "foreground": {
+        "token": "color.light.border.input",
+        "hex": "#6b7280",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 25
+      },
+      "background": {
+        "token": "color.light.surface.default",
+        "hex": "#ffffff",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 19
+      },
+      "ratio": 4.83,
+      "required": 3,
+      "criterion": "1.4.11 Non-text Contrast",
+      "pass": true,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 41
+    },
+    {
+      "pair": "Input border",
+      "theme": "dark",
+      "kind": "ui",
+      "text": null,
+      "foreground": {
+        "token": "color.dark.border.input",
+        "hex": "#64748b",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 35
+      },
+      "background": {
+        "token": "color.dark.surface.default",
+        "hex": "#0f172a",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 29
+      },
+      "ratio": 3.75,
+      "required": 3,
+      "criterion": "1.4.11 Non-text Contrast",
+      "pass": true,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 42
+    },
+    {
+      "pair": "Focus ring",
+      "theme": "light",
+      "kind": "ui",
+      "text": null,
+      "foreground": {
+        "token": "color.light.focus.ring",
+        "hex": "#2563eb",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 26
+      },
+      "background": {
+        "token": "color.light.surface.default",
+        "hex": "#ffffff",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 19
+      },
+      "ratio": 5.17,
+      "required": 3,
+      "criterion": "1.4.11 Non-text Contrast",
+      "pass": true,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 49
+    },
+    {
+      "pair": "Focus ring",
+      "theme": "dark",
+      "kind": "ui",
+      "text": null,
+      "foreground": {
+        "token": "color.dark.focus.ring",
+        "hex": "#60a5fa",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 36
+      },
+      "background": {
+        "token": "color.dark.surface.default",
+        "hex": "#0f172a",
+        "file": "examples/tidewater-app/tokens.json",
+        "line": 29
+      },
+      "ratio": 7.02,
+      "required": 3,
+      "criterion": "1.4.11 Non-text Contrast",
+      "pass": true,
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 50
+    }
+  ],
+  "contrastSummary": {
+    "checked": 12,
+    "pass": 11,
+    "fail": 1
+  },
+  "targets": [
+    {
+      "name": "Primary button",
+      "token": "size.touch.ios.button",
+      "platform": "ios",
+      "value": 44,
+      "unit": "pt",
+      "size": 44,
+      "sizeUnit": "pt",
+      "conversion": "",
+      "minimum": 44,
+      "pass": true,
+      "severity": null,
+      "file": "examples/tidewater-app/tokens.json",
+      "line": 50
+    },
+    {
+      "name": "Tab bar item",
+      "token": "size.touch.ios.tab",
+      "platform": "ios",
+      "value": 49,
+      "unit": "pt",
+      "size": 49,
+      "sizeUnit": "pt",
+      "conversion": "",
+      "minimum": 44,
+      "pass": true,
+      "severity": null,
+      "file": "examples/tidewater-app/tokens.json",
+      "line": 51
+    },
+    {
+      "name": "Primary button",
+      "token": "size.touch.android.button",
+      "platform": "android",
+      "value": 48,
+      "unit": "dp",
+      "size": 48,
+      "sizeUnit": "dp",
+      "conversion": "",
+      "minimum": 48,
+      "pass": true,
+      "severity": null,
+      "file": "examples/tidewater-app/tokens.json",
+      "line": 54
+    },
+    {
+      "name": "Icon button",
+      "token": "size.touch.web.icon-button",
+      "platform": "web",
+      "value": 20,
+      "unit": "px",
+      "size": 20,
+      "sizeUnit": "px",
+      "conversion": "",
+      "minimum": 24,
+      "pass": false,
+      "severity": "error",
+      "file": "examples/tidewater-app/tokens.json",
+      "line": 57
+    },
+    {
+      "name": "Link row",
+      "token": "size.touch.web.link-row",
+      "platform": "web",
+      "value": 2.5,
+      "unit": "rem",
+      "size": 40,
+      "sizeUnit": "px",
+      "conversion": "rem x 16",
+      "minimum": 24,
+      "pass": true,
+      "severity": null,
+      "file": "examples/tidewater-app/tokens.json",
+      "line": 58
+    }
+  ],
+  "counts": {
+    "error": 2,
+    "warning": 0
+  },
+  "findings": [
+    {
+      "id": "low-contrast",
+      "severity": "error",
+      "file": "examples/tidewater-app/token-rules.json",
+      "line": 26,
+      "subject": "color.dark.text.muted",
+      "message": "Caption (dark): color.dark.text.muted (examples/tidewater-app/tokens.json:33, #64748b) on color.dark.surface.default (examples/tidewater-app/tokens.json:29, #0f172a) has a contrast ratio of 3.75:1; text needs at least 4.5:1 (WCAG 2.2 SC 1.4.3 Contrast (Minimum))",
+      "fix": "Change color.dark.text.muted or color.dark.surface.default until the ratio is at least 4.5:1"
+    },
+    {
+      "id": "small-target",
+      "severity": "error",
+      "file": "examples/tidewater-app/tokens.json",
+      "line": 57,
+      "subject": "size.touch.web.icon-button",
+      "message": "Icon button (web): size.touch.web.icon-button is 20 px, below the 24 px minimum (WCAG 2.2 success criterion 2.5.8 Target Size (Minimum), level AA: 24 by 24 CSS pixels)",
+      "fix": "Make size.touch.web.icon-button at least 24 px"
+    }
+  ],
+  "notes": [],
+  "gate": {
+    "failOn": "error",
+    "pass": false,
+    "reason": "2 errors"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "pairs": [
+    {
+      "name": "Body text",
+      "size": { "value": 16, "unit": "pt" },
+      "themes": {
+        "light": { "foreground": "color.text.primary", "background": "color.surface" },
+        "dark": { "foreground": "color.text.primary", "background": "color.surface" }
+      }
+    },
+    {
+      "name": "Link text",
+      "size": { "value": 16, "unit": "pt" },
+      "themes": {
+        "light": { "foreground": "color.accent", "background": "color.surface" }
+      }
+    },
+    {
+      "name": "Hint text",
+      "themes": {
+        "light": { "foreground": "color.text.hint", "background": "color.surface" },
+        "dark": { "foreground": "color.border", "background": "color.surface" }
+      }
+    }
+  ],
+  "targets": [
+    { "name": "Primary button", "token": "size.touch.button", "platform": "ios" }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "remBase": 16,
+  "pairs": [
+    {
+      "name": "Body text",
+      "size": "font.size.body",
+      "weight": "normal",
+      "themes": {
+        "light": { "foreground": "color.light.text.primary", "background": "color.light.surface.default" },
+        "dark": { "foreground": "color.dark.text.primary", "background": "color.dark.surface.default" }
+      }
+    },
+    {
+      "name": "Secondary text",
+      "size": { "value": 15, "unit": "pt" },
+      "themes": {
+        "light": { "foreground": "color.light.text.secondary", "background": "color.light.surface.default" },
+        "dark": { "foreground": "color.dark.text.secondary", "background": "color.dark.surface.default" }
+      }
+    },
+    {
+      "name": "Caption",
+      "size": "font.size.caption",
+      "themes": {
+        "light": { "foreground": "color.light.text.muted", "background": "color.light.surface.default" },
+        "dark": { "foreground": "color.dark.text.muted", "background": "color.dark.surface.default" }
+      }
+    },
+    {
+      "name": "Section label",
+      "size": { "value": 20, "unit": "pt" },
+      "themes": {
+        "light": { "foreground": "color.light.text.muted", "background": "color.light.surface.default" },
+        "dark": { "foreground": "color.dark.text.muted", "background": "color.dark.surface.default" }
+      }
+    },
+    {
+      "name": "Input border",
+      "kind": "ui",
+      "themes": {
+        "light": { "foreground": "color.light.border.input", "background": "color.light.surface.default" },
+        "dark": { "foreground": "color.dark.border.input", "background": "color.dark.surface.default" }
+      }
+    },
+    {
+      "name": "Focus ring",
+      "kind": "ui",
+      "themes": {
+        "light": { "foreground": "color.light.focus.ring", "background": "color.light.surface.default" },
+        "dark": { "foreground": "color.dark.focus.ring", "background": "color.dark.surface.default" }
+      }
+    }
+  ],
+  "targets": [
+    { "name": "Primary button", "token": "size.touch.ios.button", "platform": "ios" },
+    { "name": "Tab bar item", "token": "size.touch.ios.tab", "platform": "ios" },
+    { "name": "Primary button", "token": "size.touch.android.button", "platform": "android" },
+    { "name": "Icon button", "token": "size.touch.web.icon-button", "platform": "web" },
+    { "name": "Link row", "token": "size.touch.web.link-row", "platform": "web" }
+  ]
+}
